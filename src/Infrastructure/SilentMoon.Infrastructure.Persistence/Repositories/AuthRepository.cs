@@ -19,6 +19,13 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
             _dapper = dapper;
         }
 
+        public async Task ActivateApplicationUser(string id)
+        {
+            var sql = "UPDATE ApplicationUsers SET IsEmailConfirmed = 1 WHERE Id = :Id";
+            await _dapper.ExecuteAsync(sql, new { Id = id });
+
+        }
+
         public async Task<ApplicationUser> CreateApplicationUserAsync(RegisterRequest registerRequest)
         {
             var passwordHash =BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
@@ -44,6 +51,25 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
             };
 
             return user;
+        }
+
+        public async Task<ApplicationUser> GetApplicationUserByEmailAsync(string email)
+        {
+            var sql = "SELECT * FROM ApplicationUsers WHERE Email = :Email";
+            var user = await _dapper.GetAsync<ApplicationUser>(sql, new { Email = email });
+            return user;
+        }
+
+        public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
+        {
+            var sql = "INSERT INTO RefreshTokens (Id, Token, UserId, Expires, Created,CreatedByIp,IsRevoked) VALUES (refresh_token_seq.NEXTVAL,, :Token, :UserId, :Expires, :Created, :CreatedByIp, :IsRevoked)";
+            await _dapper.ExecuteAsync(sql, refreshToken);
+            var updateSql = "UPDATE ApplicationUsers SET RefreshTokenId = :RefreshTokenId WHERE Id = :UserId";
+            await _dapper.ExecuteAsync(updateSql, new
+            {
+                RefreshTokenId = refreshToken.Id,
+                UserId = refreshToken.UserId
+            });
         }
 
         public async Task<bool> UserExistsAsync(string email)

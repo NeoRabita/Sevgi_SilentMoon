@@ -12,7 +12,7 @@ namespace SilentMoon.Domain.Entities
             Pomodoros = new HashSet<Pomodoro>();
         }
         public string Id { get; set; }
-        public string FirstName { get; set; }
+         public string FirstName { get; set; }
         public string Email { get; set; }
         public bool IsEmailConfirmed { get; set; }
         public string PasswordHash { get; set; }

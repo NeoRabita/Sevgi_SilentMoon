@@ -12,6 +12,10 @@ namespace SilentMoon.Application.Interfaces.Repositories
     {
         Task<ApplicationUser> CreateApplicationUserAsync(RegisterRequest registerRequest);
         Task<bool> UserExistsAsync(string email);
+        Task<ApplicationUser> GetApplicationUserByEmailAsync(string email);
+        Task ActivateApplicationUser(string id);
+        Task SaveRefreshTokenAsync(RefreshToken refreshToken);
+
 
     }
 }

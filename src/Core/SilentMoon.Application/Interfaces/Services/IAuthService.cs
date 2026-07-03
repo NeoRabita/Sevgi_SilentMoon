@@ -9,8 +9,9 @@ namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task VerifyEmailAsync(string email,string code);
+        Task<Result<AuthenticationResponse>> VerifyEmailAsync(string email,string code);
         Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request); 
+        Task<Result<RegisterResponse>> LoginAsync(AuthenticationRequest request);
 
     }
 }

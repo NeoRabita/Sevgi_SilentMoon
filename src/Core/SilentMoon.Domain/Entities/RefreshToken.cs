@@ -8,7 +8,7 @@ namespace SilentMoon.Domain.Entities
     public class RefreshToken : BaseEntity
     {
         public string Token { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public DateTime Expires { get; set; }
         public DateTime Created { get; set; }
         public string CreatedByIp { get; set; }
