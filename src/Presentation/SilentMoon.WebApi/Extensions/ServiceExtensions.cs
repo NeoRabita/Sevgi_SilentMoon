@@ -15,7 +15,7 @@ namespace SilentMoon.WebApi.Extensions
         public static void AddServiceExtension(this IServiceCollection services)
         {
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            services.AddTransient<IUserService, UserService>();
+            //services.AddTransient<IUserService, UserService>();
             services.AddScoped<IProblemResultFactory, ProblemResultFactory>();
         }
 

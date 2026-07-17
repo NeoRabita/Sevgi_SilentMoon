@@ -10,7 +10,7 @@ namespace SilentMoon.Application.DTOs.Account
     public class RegisterResponse
     {
         public string Message { get; set; }
-        public string Email { get; set; }
+        public string OtpId { get; set; }
         public string OtpExpireAt { get; set; }
     }
 }

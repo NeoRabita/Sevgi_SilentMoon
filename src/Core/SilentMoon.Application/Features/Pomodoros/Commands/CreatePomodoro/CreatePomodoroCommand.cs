@@ -22,13 +22,12 @@ namespace SilentMoon.Application.Features.Pomodoros.Commands.CreatePomodoro
 
     public class CreatePomodoroCommandHandler : ICommandHandler<CreatePomodoroCommand, string>
     {
-        private readonly IUserService userService;
+        //private readonly IUserService userService;
         private readonly IUow _uow;
         private readonly IAppLogger<CreatePomodoroCommandHandler> _logger;
 
-        public CreatePomodoroCommandHandler(IUserService userService, IUow uow, IAppLogger<CreatePomodoroCommandHandler> logger)
+        public CreatePomodoroCommandHandler( IUow uow, IAppLogger<CreatePomodoroCommandHandler> logger)
         {
-            this.userService = userService;
             _uow = uow;
             _logger = logger;
         }

@@ -4,6 +4,8 @@ using SilentMoon.Infrastructure.Persistence.Contexts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq.Expressions;
+using System;
 
 namespace SilentMoon.Infrastructure.Persistence.Repositories
 {
@@ -51,6 +53,11 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
         public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
+        }
+
+        public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+           return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
         }
     }
 }

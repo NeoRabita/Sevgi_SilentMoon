@@ -15,44 +15,86 @@ namespace SilentMoon.Infrastructure.Persistence.Services
     public class AuthService : IAuthService
     {
         private readonly IOtpService _otpService;
-        private readonly IAuthRepository _authRepo;
         private readonly IJwtService _jwtService;
+        private readonly IGenericRepository<ApplicationUser> _genericRepository;
+        private readonly IGenericRepository<RefreshToken> _genericTokenRepository;
 
-        public AuthService(IOtpService otpService, IAuthRepository authRepo, IJwtService jwtService)
+        public AuthService(IOtpService otpService, IJwtService jwtService, IGenericRepository<RefreshToken> genericTokenRepository, IGenericRepository<ApplicationUser> genericRepository)
         {
             _otpService = otpService;
-            _authRepo = authRepo;
             _jwtService = jwtService;
+            _genericTokenRepository = genericTokenRepository;
+            _genericRepository = genericRepository;
         }
 
-        //public async Task<Result<RegisterResponse>> LoginAsync(AuthenticationRequest request)
-        //{
-        //    if (!(await _authRepo.UserExistsAsync(request.Email))) {
-        //        return UserErrors.NotFoundByEmail;
-        //    }
-        //    var auser=await _authRepo.GetApplicationUserByEmailAsync(request.Email);
+        public async Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken)
+        {
+            var token=await _genericTokenRepository.GetAsync(r=>r.Token==refreshToken);
+            if (token is null) { return UserErrors.Unauthorized(); }
 
+            if (!token.IsActive)
+            {
+                return UserErrors.Unauthorized();
+            }
 
-        //}
+            var user = await _genericRepository.GetAsync(
+             x => x.Id == token.UserId);
+
+            if (user is null)
+                return UserErrors.NotFoundByEmail;
+            var jwt = _jwtService.GenerateToken(user.Id, user.Email);
+
+            token.Token = _jwtService.GenerateRefreshToken();
+            token.Created = DateTime.UtcNow;
+            token.Expires = DateTime.UtcNow.AddDays(7);
+            token.IsRevoked = false;
+
+            _genericTokenRepository.Update(token);
+
+            return Result<AuthenticationResponse>.Success(
+                new AuthenticationResponse
+                {
+                    Name = user.FirstName,
+                    Email = user.Email,
+                    Jwt = jwt,
+                    RefreshToken = new RefreshTokenDto(
+                        token.Token,
+                        new DateTimeOffset(token.Expires, TimeSpan.Zero))
+                });
+
+        }
 
         public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
         {
             try
             {
-                if (await _authRepo.UserExistsAsync(request.Email))
-                {
+                var existingUser = await _genericRepository.GetAsync(
+                    x => x.Email == request.Email);
 
+                if (existingUser is not null)
+                {
                     return UserErrors.EmailNotUnique;
                 }
 
-                var user = await _authRepo.CreateApplicationUserAsync(request);
+                var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+                var user = new ApplicationUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FirstName = request.Name,
+                    Email = request.Email,
+                    PasswordHash = passwordHash,
+                    IsEmailConfirmed = false,
+                };
+
+                await _genericRepository.AddAsync(user);
 
                 var otp = await _otpService.CreateAndSendOtpCodeAsync(user.Email, "Email Verification", "Your verification code is: ");
 
                 return Result<RegisterResponse>.Success(new RegisterResponse
                 {
                     Message = "Please check your email for verification code.",
-                    Email = user.Email,
+                    OtpId = otp.Id.ToString(),
                     OtpExpireAt = otp.ExpiresAt.ToShortDateString()
 
                 });
@@ -67,46 +109,51 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             }
         }
 
-       
-
-        public async Task<Result<AuthenticationResponse>> VerifyEmailAsync(string email, string code)
+        public async Task<Result<RegisterResponse>> ResendOtp(string otpId)
         {
-          var isVerified= await _otpService.VerifyOtpCode(email, code);
-            if (!isVerified)
+            var otp=await _otpService.GetOtpCodeAsync(otpId);
+            if(otp.IsFailure)
             {
-               return OtpErrors.InvalidCode;
+                return otp.Error;
             }
-            var user = await _authRepo.GetApplicationUserByEmailAsync(email);
+
+            var newOtp = await _otpService.CreateAndSendOtpCodeAsync(otp.Value.Email, "Email Verification", "Your verification code is: ");
+
+            return Result<RegisterResponse>.Success(new RegisterResponse
+            {
+                Message = "Please check your email for verification code.",
+                OtpId = newOtp.Id.ToString(),
+                OtpExpireAt = newOtp.ExpiresAt.ToShortDateString()
+            });
+
+
+
+        }
+
+        public async Task<Result<ApplicationUser>> VerifyEmailAsync(string otpId, string code)
+        {
+            var otp = await _otpService.VerifyOtpCodeAsync(otpId,code);
+            if (otp.IsFailure)
+            {
+                return OtpErrors.InvalidCode;
+            }
+
+            var user = await _genericRepository.GetAsync(
+                    x => x.Email == otp.Value.Email);
             if (user == null)
             {
                 return UserErrors.NotFoundByEmail;
             }
             if (!user.IsEmailConfirmed)
             {
-                await _authRepo.ActivateApplicationUser(user.Id);
+                user.IsEmailConfirmed = true;
+                _genericRepository.Update(user);
             }
 
-            var jwt= _jwtService.GenerateToken(user.Id,email);
+            return user;
 
-
-            var refreshToken = new RefreshToken
-            {
-                Token = _jwtService.GenerateRefreshToken(),
-                UserId = user.Id,
-                Expires = DateTime.UtcNow.AddDays(7),
-                Created = DateTime.UtcNow,
-                CreatedByIp = "127.0.0.1",
-                IsRevoked = false
-            };
-            await _authRepo.SaveRefreshTokenAsync(refreshToken);
-            return Result<AuthenticationResponse>.Success(new AuthenticationResponse
-            {
-                Name = user.FirstName,
-                Jwt = jwt,
-                Email = email,
-                RefreshToken = new RefreshTokenDto(refreshToken.Token, new DateTimeOffset(refreshToken.Expires, TimeSpan.Zero))
-            });
 
         }
+
     }
 }

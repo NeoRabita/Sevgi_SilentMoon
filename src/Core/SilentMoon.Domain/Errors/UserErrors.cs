@@ -19,6 +19,9 @@ namespace SilentMoon.Domain.Errors
         public static readonly Error EmailNotUnique = Error.Conflict(
             "Users.EmailNotUnique",
             "The provided email is not unique");
+        public static readonly Error EmailNotConfirmed = Error.Conflict(
+            "Users.EmailNotConfirmed",
+            "The provided email is not confirmed");
     }
 
 }

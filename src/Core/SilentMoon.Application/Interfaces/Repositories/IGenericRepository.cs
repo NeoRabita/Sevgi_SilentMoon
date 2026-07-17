@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,6 +9,7 @@ namespace SilentMoon.Application.Interfaces.Repositories
     public interface IGenericRepository<T> where T : class
     {
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
 

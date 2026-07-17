@@ -9,24 +9,20 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
 using SilentMoon.Application.DTOs.JWT;
+using SilentMoon.Infrastructure.Persistence.Settings;
+using Microsoft.Extensions.Options;
+using SilentMoon.Application.DTOs.Account;
+using SilentMoon.Domain.Entities;
 
 namespace SilentMoon.Infrastructure.Persistence.Services
 {
     public class JwtService : IJwtService
     {
-        private readonly string _secretKey;
-        private readonly string _issuer;
-        private readonly string _audience;
-        private readonly int _expiryMinutes;
-        public JwtService(IConfiguration configuration)
+        private readonly APIAppSettings _settings;
+        public JwtService(IOptions<APIAppSettings> options)
         {
-            var settings = configuration.GetSection("APIAppSettings");
-            _secretKey = settings["JwtSecret"];
-            _issuer = settings["JwtIssuer"];
-            _audience = settings["JwtAudience"];
-            _expiryMinutes = int.Parse(settings["JwtExpiryMinutes"] ?? "15");
+            _settings = options.Value;
         }
-
         public string GenerateRefreshToken()
         {
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -36,21 +32,18 @@ namespace SilentMoon.Infrastructure.Persistence.Services
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(ClaimTypes.Email, email),
-                new Claim("UserId", userId),
-                new Claim("Email", email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.JWTSettings.Key));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiresAt = DateTimeOffset.UtcNow.AddMinutes(_expiryMinutes);
+            var expiresAt = DateTimeOffset.UtcNow.AddMinutes(_settings.JWTSettings.DurationInMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
+                issuer: _settings.JWTSettings.Issuer,
+                audience: _settings.JWTSettings.Audience,
                 claims: claims,
                 expires: expiresAt.UtcDateTime,
                 signingCredentials: credentials
@@ -66,16 +59,16 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_secretKey);
+                var key = Encoding.UTF8.GetBytes(_settings.JWTSettings.Key);
 
                 var validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
-                    ValidIssuer = _issuer,
+                    ValidIssuer = _settings.JWTSettings.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = _audience,
+                    ValidAudience = _settings.JWTSettings.Audience,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };

@@ -1,7 +1,9 @@
 ﻿using SilentMoon.Application.DTOs.Email;
+using SilentMoon.Application.Interfaces.Caching;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
 using SilentMoon.Domain.Entities;
+using SilentMoon.Domain.Errors;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -13,13 +15,14 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 {
     public class OtpService : IOtpService
     {
-        private readonly IOtpRepository _otpRepo;
         private readonly IEmailService _emailService;
+        private readonly ICacheService _cacheService;
 
-        public OtpService(IOtpRepository otpRepo, IEmailService emailService)
+
+        public OtpService( IEmailService emailService, ICacheService cacheService)
         {
-            _otpRepo = otpRepo;
             _emailService = emailService;
+            _cacheService = cacheService;
         }
 
         public async Task<OTPCode> CreateAndSendOtpCodeAsync(string email, string subject, string body)
@@ -36,7 +39,8 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 Attempts = 0
             };
 
-            await _otpRepo.SaveAsync(otp);
+            var key = $"otp:{otp.Id}";
+            await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(5));
 
             await _emailService.SendAsync(new EmailRequest
             {
@@ -49,18 +53,45 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-        public async Task<bool> VerifyOtpCode(string email, string code)
+        public async Task<Result<OTPCode>> GetOtpCodeAsync(string otpId)
         {
 
-            var otp = await _otpRepo.GetByEmailAsyncOrCodeAsync(email, code);
+            var key = $"otp:{otpId}";
+            var otp = await _cacheService.GetAsync<OTPCode>(key);
 
-            if (otp == null) throw new Exception("Invalid OTP");
-            if (otp.IsExpired) throw new Exception("OTP code expired");
-            if(!otp.CanAttempt)throw new Exception("Maximum attempts reached");
+            if (otp is null)
+                return OtpErrors.InvalidCode;
 
-            await _otpRepo.MarkAsUsedAsync(email, code);
-            return true;
+            
+            await _cacheService.RemoveAsync(key);
 
+            return Result<OTPCode>.Success(otp);
+
+        }
+
+        public async Task<Result<OTPCode>> VerifyOtpCodeAsync(string otpId,string code)
+        {
+            var key = $"otp:{otpId}";
+            var otp = await _cacheService.GetAsync<OTPCode>(key);
+
+            if (otp is null)
+                return OtpErrors.InvalidCode;
+
+            if(otp.Code != code)
+            {
+                otp.Attempts++;
+                await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(5));
+                return OtpErrors.InvalidCode;
+            }
+
+            if (otp.IsExpired)
+                return OtpErrors.Expired;
+            if (!otp.CanAttempt)
+                return OtpErrors.AlreadyUsed;
+
+            await _cacheService.RemoveAsync(key);
+
+            return Result<bool>.Success(otp);
         }
 
         private string GenerateOtpCode()

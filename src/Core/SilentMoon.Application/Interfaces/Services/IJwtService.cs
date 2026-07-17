@@ -13,5 +13,8 @@ namespace SilentMoon.Application.Interfaces.Services
         JwtTokenDto GenerateToken(string userId, string email);
         ClaimsPrincipal ValidateToken(string token);
         string GenerateRefreshToken();
+
+        //string HandleRefreshToken(string userId);
+
     }
 }

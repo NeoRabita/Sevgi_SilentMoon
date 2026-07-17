@@ -2,31 +2,62 @@
 using Microsoft.AspNetCore.Mvc;
 using SilentMoon.Application.DTOs.Account;
 using SilentMoon.Application.Interfaces.Services;
+using SilentMoon.Application.Features.Users.Commands.RegisterUser;
 using System.Threading.Tasks;
+using SilentMoon.Application.Features.Users.Commands.OTP;
+using SilentMoon.Application.Features.Users.Commands.LoginUser;
+using SilentMoon.Application.Features.Users.Commands.Token;
 
 namespace SilentMoon.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
-        private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IResult> Register([FromBody] RegisterUserCommand command)
         {
-            var result = await _authService.RegisterAsync(request);
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-            return Ok(result.Value);
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
         }
+        
+        [HttpPost("verify-email")]
+        public async Task<IResult> VerifyEmail([FromBody] VerifyEmailCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+
+        [HttpPost("login")]
+        public async Task<IResult> Login([FromBody] LoginUserCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+
+
+        [HttpPost("refresh")]
+        public async Task<IResult> Refresh([FromBody] RefreshTokenCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+        
+        [HttpPost("resend-otp")]
+        public async Task<IResult> ResendOtp([FromBody] ResendOtpCodeCommandHandler command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+
+
+
 
 
     }

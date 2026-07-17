@@ -1,4 +1,5 @@
 ﻿using SilentMoon.Application.DTOs.Account;
+using SilentMoon.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,11 @@ namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<Result<AuthenticationResponse>> VerifyEmailAsync(string email,string code);
-        Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request); 
-        Task<Result<RegisterResponse>> LoginAsync(AuthenticationRequest request);
+        Task<Result<ApplicationUser>> VerifyEmailAsync(string otpId, string code);
+        Task<Result<RegisterResponse>> ResendOtp(string otpId);
+        Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request);
+        Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken);
+        //Task<Result<bool>> LoginAsync(AuthenticationRequest request);
 
     }
 }
