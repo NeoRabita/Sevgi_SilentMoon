@@ -38,12 +38,9 @@ namespace SilentMoon.Infrastructure.Persistence
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IDapper, DapperClass>();
-            services.AddScoped<IPomodoroRepository, PomodoroRepository>();
             services.AddScoped<IUow, Uow>();
-            services.AddScoped<IOtpRepository, OtpRepository>();
             services.AddScoped<IOtpService,OtpService>();
             services.AddScoped<IAuthService, AuthService>();
-            //services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IJwtService, JwtService>();
 
             RegisterDapperDomainMappings();

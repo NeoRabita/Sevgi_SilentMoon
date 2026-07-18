@@ -6,4 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\SilentMoon.SharedKernel\SilentMoon.SharedKernel.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
 </Project>

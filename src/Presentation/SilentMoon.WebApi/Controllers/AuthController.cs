@@ -49,7 +49,7 @@ namespace SilentMoon.WebApi.Controllers
         }
         
         [HttpPost("resend-otp")]
-        public async Task<IResult> ResendOtp([FromBody] ResendOtpCodeCommandHandler command)
+        public async Task<IResult> ResendOtp([FromBody] ResendOtpCodeCommand command)
         {
             var result = await Dispatcher.Send(command);
             return HandleResult(result);

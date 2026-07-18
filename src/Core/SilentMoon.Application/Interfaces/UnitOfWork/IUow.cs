@@ -5,7 +5,6 @@ using System;
 
 public interface IUow : IDisposable
 {
-    IPomodoroRepository PomodoroRepository { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task BeginTransactionAsync();
     Task CommitAsync();

@@ -16,4 +16,11 @@
     <ProjectReference Include="..\SilentMoon.Domain\SilentMoon.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\ViewModels\" />
+    <Folder Include="Features\Pomodoros\Commands\" />
+    <Folder Include="Features\Pomodoros\Queries\" />
+    <Folder Include="Mappings\" />
+  </ItemGroup>
+
 </Project>

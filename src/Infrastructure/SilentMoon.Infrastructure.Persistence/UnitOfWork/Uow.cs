@@ -9,14 +9,11 @@ public class Uow : IUow
     private readonly AppDbContext _context;
     private IDbContextTransaction? _transaction;
 
-    public IPomodoroRepository PomodoroRepository { get; }
 
     public Uow(
-        AppDbContext context,
-        IPomodoroRepository pomodoroRepository)
+        AppDbContext context)
     {
         _context = context;
-        PomodoroRepository = pomodoroRepository;
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
