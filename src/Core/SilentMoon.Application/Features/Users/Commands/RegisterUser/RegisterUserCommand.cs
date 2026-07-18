@@ -28,12 +28,14 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
         private readonly IAuthService _authService;
         private readonly IUow _uow;
         private readonly IAppLogger<RegisterUserCommandHandler> _logger;
+        private readonly IOtpService _otpService;
 
-        public RegisterUserCommandHandler(IAuthService authService, IUow uow, IAppLogger<RegisterUserCommandHandler> logger)
+        public RegisterUserCommandHandler(IAuthService authService, IUow uow, IAppLogger<RegisterUserCommandHandler> logger, IOtpService otpService)
         {
             _authService = authService;
             _uow = uow;
             _logger = logger;
+            _otpService = otpService;
         }
 
         public async Task<Result<RegisterResponse>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -52,22 +54,21 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
                 Password = command.Password
             };
 
-            var result=await _authService.RegisterAsync(request);
-            if (result.IsFailure)
+            var email=await _authService.RegisterAsync(request);
+
+            var otp = await _otpService.CreateAndSendOtpCodeAsync(email.Value, "Email Verification", "Your verification code is: ");
+
+         
+            _logger.LogInformation("User successfully created. OtpId: {OtpId}", otp.Id);
+
+            return Result<RegisterResponse>.Success(new RegisterResponse
             {
-                _logger.LogWarning(
-                    "User registration failed for email {Email}. Error: {Error}",
-                    command.Email,
-                    result.Error);
+                Message = "Please check your email for verification code.",
+                OtpId = otp.Id.ToString(),
+                OtpExpireAt = otp.ExpiresAt.ToShortDateString()
 
-                return result.Error;
-            }
+            });
 
-            await _uow.SaveChangesAsync();
-
-            _logger.LogInformation("User successfully created. OtpId: {OtpId}", result.Value.OtpId);
-
-            return result;
 
         }
     }

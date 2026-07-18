@@ -64,10 +64,9 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-        public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
+        public async Task<Result<string>> RegisterAsync(RegisterRequest request)
         {
-            try
-            {
+           
                 var existingUser = await _genericRepository.GetAsync(
                     x => x.Email == request.Email);
 
@@ -87,26 +86,12 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                     IsEmailConfirmed = false,
                 };
 
-                await _genericRepository.AddAsync(user);
+               await _genericRepository.AddAsync(user);
 
-                var otp = await _otpService.CreateAndSendOtpCodeAsync(user.Email, "Email Verification", "Your verification code is: ");
+                return user.Email;
 
-                return Result<RegisterResponse>.Success(new RegisterResponse
-                {
-                    Message = "Please check your email for verification code.",
-                    OtpId = otp.Id.ToString(),
-                    OtpExpireAt = otp.ExpiresAt.ToShortDateString()
 
-                });
-            }
-            catch (Exception ex)
-            {
-                return new Error(
-                    "Registration.Failed",
-                    $"Registration failed: {ex.Message}",
-                    ErrorType.Failure
-                );
-            }
+               
         }
 
         public async Task<Result<RegisterResponse>> ResendOtp(string otpId)
