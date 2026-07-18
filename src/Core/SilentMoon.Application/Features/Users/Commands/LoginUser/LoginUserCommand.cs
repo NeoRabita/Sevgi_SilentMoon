@@ -26,15 +26,13 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
 
     public class LoginUserHandler : ICommandHandler<LoginUserCommand, AuthenticationResponse>
     {
-        private readonly IUow _uow;
         private readonly IAppLogger<LoginUserHandler> _logger;
         private readonly IJwtService _jwtService;
         private readonly IGenericRepository<ApplicationUser> _genericRepository;
         private readonly IGenericRepository<RefreshToken> _refreshTokensRepository;
 
-        public LoginUserHandler(IUow uow, IAppLogger<LoginUserHandler> logger, IJwtService jwtService, IGenericRepository<ApplicationUser> genericRepository, IGenericRepository<RefreshToken> refreshTokensRepository)
+        public LoginUserHandler( IAppLogger<LoginUserHandler> logger, IJwtService jwtService, IGenericRepository<ApplicationUser> genericRepository, IGenericRepository<RefreshToken> refreshTokensRepository)
         {
-            _uow = uow;
             _logger = logger;
             _jwtService = jwtService;
             _genericRepository = genericRepository;
@@ -100,7 +98,6 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
                 _refreshTokensRepository.Update(existingRefreshToken);
             }
 
-            await _uow.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User {Email} logged in successfully.", existingUser.Email);
 

@@ -25,14 +25,12 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
     {
         private readonly IAuthService _authService;
         private readonly IAppLogger<VerifyEmailCommandHandler> _logger;
-        private readonly IUow _uow;
         private readonly IJwtService _jwtService;
         private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
-        public VerifyEmailCommandHandler(IAuthService authService, IAppLogger<VerifyEmailCommandHandler> logger, IUow uow, IJwtService jwtService, IGenericRepository<RefreshToken> genericRepository)
+        public VerifyEmailCommandHandler(IAuthService authService, IAppLogger<VerifyEmailCommandHandler> logger,  IJwtService jwtService, IGenericRepository<RefreshToken> genericRepository)
         {
             _authService = authService;
             _logger = logger;
-            _uow = uow;
             _jwtService = jwtService;
             _refreshTokenRepository = genericRepository;
         }
@@ -65,7 +63,6 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
             };
             await _refreshTokenRepository.AddAsync(refreshToken);
 
-            await _uow.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("JWT and Refresh Token created for User {UserId}", result.Value.Id);
 
             return Result<AuthenticationResponse>.Success(new AuthenticationResponse
