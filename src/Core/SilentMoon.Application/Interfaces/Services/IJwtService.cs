@@ -1,4 +1,5 @@
 ﻿using SilentMoon.Application.DTOs.JWT;
+using SilentMoon.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace SilentMoon.Application.Interfaces.Services
     {
         JwtTokenDto GenerateToken(string userId, string email);
         ClaimsPrincipal ValidateToken(string token);
-        string GenerateRefreshToken();
-
+        RefreshToken GenerateRefreshToken(string userId);
+        RefreshToken UpdateRefreshToken(RefreshToken refreshToken);
         //string HandleRefreshToken(string userId);
 
     }

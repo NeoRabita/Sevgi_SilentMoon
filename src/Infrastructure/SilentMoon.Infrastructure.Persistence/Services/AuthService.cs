@@ -44,12 +44,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 return UserErrors.NotFoundByEmail;
             var jwt = _jwtService.GenerateToken(user.Id, user.Email);
 
-            token.Token = _jwtService.GenerateRefreshToken();
-            token.Created = DateTime.UtcNow;
-            token.Expires = DateTime.UtcNow.AddDays(7);
-            token.IsRevoked = false;
-
-            _genericTokenRepository.Update(token);
+            _genericTokenRepository.Update(_jwtService.UpdateRefreshToken(token));
 
             return Result<AuthenticationResponse>.Success(
                 new AuthenticationResponse
@@ -139,6 +134,8 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
 
         }
+
+
 
     }
 }

@@ -68,34 +68,17 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
             }
             var jwt = _jwtService.GenerateToken(existingUser.Id, existingUser.Email);
 
-            var refreshTokenValue = _jwtService.GenerateRefreshToken();
-            var refreshTokenExpires = DateTime.UtcNow.AddDays(7);
-
             var existingRefreshToken =
                 await _refreshTokensRepository.GetAsync(x => x.UserId == existingUser.Id);
 
             if (existingRefreshToken is null)
             {
-                existingRefreshToken = new RefreshToken
-                {
-                    UserId = existingUser.Id,
-                    Token = refreshTokenValue,
-                    Expires = refreshTokenExpires,
-                    Created = DateTime.UtcNow,
-                    CreatedByIp = "127.0.0.1",
-                    IsRevoked = false
-                };
-
+                existingRefreshToken = _jwtService.GenerateRefreshToken(existingUser.Id);
                 await _refreshTokensRepository.AddAsync(existingRefreshToken);
             }
             else
             {
-                existingRefreshToken.Token = refreshTokenValue;
-                existingRefreshToken.Expires = refreshTokenExpires;
-                existingRefreshToken.Created = DateTime.UtcNow;
-                existingRefreshToken.IsRevoked = false;
-
-                _refreshTokensRepository.Update(existingRefreshToken);
+                _refreshTokensRepository.Update(_jwtService.UpdateRefreshToken(existingRefreshToken));
             }
 
 
@@ -108,8 +91,8 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
                     Email = existingUser.Email,
                     Jwt = jwt,
                     RefreshToken = new RefreshTokenDto(
-                        refreshTokenValue,
-                        new DateTimeOffset(refreshTokenExpires))
+                        existingRefreshToken.Token,
+                        new DateTimeOffset(existingRefreshToken.Expires))
                 });
 
 

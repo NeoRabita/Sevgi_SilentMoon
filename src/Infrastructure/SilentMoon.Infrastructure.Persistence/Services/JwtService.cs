@@ -23,9 +23,28 @@ namespace SilentMoon.Infrastructure.Persistence.Services
         {
             _settings = options.Value;
         }
-        public string GenerateRefreshToken()
+        public RefreshToken GenerateRefreshToken(string userId)
         {
-            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            var expires = DateTime.UtcNow.AddDays(_settings.JWTSettings.RefreshTokenDuration);
+            return new RefreshToken
+            {
+                Token = token,
+                Expires = expires,
+                UserId = userId,
+                Created = DateTime.UtcNow,
+                CreatedByIp = "127.0.0.1",
+                IsRevoked = false
+            };
+        }
+
+        public RefreshToken UpdateRefreshToken(RefreshToken refreshToken)
+        {
+            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            var expires = DateTime.UtcNow.AddDays(_settings.JWTSettings.RefreshTokenDuration);
+            refreshToken.Expires = expires;
+            refreshToken.Token = token;
+            return refreshToken;
         }
 
         public JwtTokenDto GenerateToken(string userId, string email)
@@ -50,8 +69,8 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             );
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return new JwtTokenDto ( tokenString ,expiresAt);
-          
+            return new JwtTokenDto(tokenString, expiresAt);
+
         }
 
         public ClaimsPrincipal ValidateToken(string token)
@@ -81,5 +100,5 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 return null;
             }
         }
-}
+    }
 }

@@ -52,15 +52,7 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
             var jwt = _jwtService.GenerateToken(result.Value.Id, result.Value.Email);
 
 
-            var refreshToken = new RefreshToken
-            {
-                Token = _jwtService.GenerateRefreshToken(),
-                UserId = result.Value.Id,
-                Expires = DateTime.UtcNow.AddDays(7),
-                Created = DateTime.UtcNow,
-                CreatedByIp = "127.0.0.1",
-                IsRevoked = false
-            };
+            var refreshToken = _jwtService.GenerateRefreshToken(result.Value.Id);
             await _refreshTokenRepository.AddAsync(refreshToken);
 
             _logger.LogInformation("JWT and Refresh Token created for User {UserId}", result.Value.Id);

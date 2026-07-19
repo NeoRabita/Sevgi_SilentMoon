@@ -15,6 +15,5 @@ namespace SilentMoon.Application.Interfaces.Services
         Task<Result<string>> RegisterAsync(RegisterRequest request);
         Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken);
         //Task<Result<bool>> LoginAsync(AuthenticationRequest request);
-
     }
 }
