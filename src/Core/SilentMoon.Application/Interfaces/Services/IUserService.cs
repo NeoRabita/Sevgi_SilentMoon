@@ -1,11 +1,13 @@
+using SilentMoon.Domain.Entities;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        ClaimsPrincipal GetUser();
-        public string GetUserId();
-        public string GetUserEmail();
+        Task<Result<ApplicationUser>> GetCurrentUserAsync();
+
+
     }
 }

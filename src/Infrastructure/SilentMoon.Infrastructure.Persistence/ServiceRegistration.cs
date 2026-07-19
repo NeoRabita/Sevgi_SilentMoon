@@ -41,6 +41,7 @@ namespace SilentMoon.Infrastructure.Persistence
             services.AddScoped<IUow, Uow>();
             services.AddScoped<IOtpService,OtpService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtService, JwtService>();
 
             RegisterDapperDomainMappings();
