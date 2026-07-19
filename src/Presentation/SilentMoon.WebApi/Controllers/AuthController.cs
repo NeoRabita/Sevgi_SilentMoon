@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SilentMoon.Application.Features.Users.Commands.OTP;
 using SilentMoon.Application.Features.Users.Commands.LoginUser;
 using SilentMoon.Application.Features.Users.Commands.Token;
+using SilentMoon.Application.Features.Users.Commands.GoogleAuthorize;
 
 namespace SilentMoon.WebApi.Controllers
 {
@@ -50,6 +51,14 @@ namespace SilentMoon.WebApi.Controllers
         
         [HttpPost("resend-otp")]
         public async Task<IResult> ResendOtp([FromBody] ResendOtpCodeCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+         
+        [HttpPost("oauth/google")]
+        public async Task<IResult> GoogleLogin([FromBody] GoogleLoginCommand command)
         {
             var result = await Dispatcher.Send(command);
             return HandleResult(result);

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Apis.Auth;
 
 namespace SilentMoon.Infrastructure.Persistence.Services
 {
@@ -25,6 +26,30 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             _jwtService = jwtService;
             _genericTokenRepository = genericTokenRepository;
             _genericRepository = genericRepository;
+        }
+
+        public async Task<Result<ApplicationUser>> GoogleLoginAsync(string idToken)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            var user = await _genericRepository.GetAsync(
+                x => x.Email == payload.Email);
+            if (user is null)
+            {
+                user = new ApplicationUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Email = payload.Email,
+                    FirstName = payload.Name,
+                    IsEmailConfirmed = true,
+                    
+                    
+                };
+
+                await _genericRepository.AddAsync(user);
+            }
+
+            return Result<ApplicationUser>.Success(user);
+
         }
 
         public async Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken)
