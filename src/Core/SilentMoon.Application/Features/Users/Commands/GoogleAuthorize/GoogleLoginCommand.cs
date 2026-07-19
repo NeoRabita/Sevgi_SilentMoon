@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SilentMoon.Application.Features.Users.Commands.GoogleAuthorize
 {
-    public class GoogleLoginCommand : ICommand<AuthenticationResponse>
+    public partial class GoogleLoginCommand : ICommand<AuthenticationResponse>
     {
         public string IdToken { get; set; }
     }

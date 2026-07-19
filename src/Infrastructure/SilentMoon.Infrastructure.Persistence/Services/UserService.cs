@@ -6,6 +6,7 @@ using SilentMoon.Domain.Errors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,8 +25,10 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         public async Task<Result<ApplicationUser>> GetCurrentUserAsync()
         {
-            var userEmail = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-            var user =await _genericRepository.GetAsync(u => u.Email == userEmail);
+            var userEmail = _httpContextAccessor.HttpContext?.User?
+     .FindFirst(ClaimTypes.Email)?
+     .Value;
+            var user = await _genericRepository.GetAsync(u => u.Email == userEmail);
             if (user is null)
             {
                 return UserErrors.NotFoundByEmail;

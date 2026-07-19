@@ -16,7 +16,9 @@ using SilentMoon.Infrastructure.Persistence.Logging;
 using SilentMoon.Infrastructure.Persistence.Repositories;
 using SilentMoon.Infrastructure.Persistence.Services;
 using SilentMoon.Infrastructure.Persistence.Settings;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 namespace SilentMoon.Infrastructure.Persistence
 {
     public static class ServiceRegistration
@@ -42,6 +44,7 @@ namespace SilentMoon.Infrastructure.Persistence
             services.AddScoped<IOtpService,OtpService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IJwtService, JwtService>();
 
             RegisterDapperDomainMappings();
@@ -50,6 +53,31 @@ namespace SilentMoon.Infrastructure.Persistence
         public static void AddPersistenceApiServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            var jwt = configuration.GetSection("APIAppSettings:JWTSettings");
+
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwt["Key"])),
+
+                        ValidateIssuer = true,
+                        ValidIssuer = jwt["Issuer"],
+
+                        ValidateAudience = true,
+                        ValidAudience = jwt["Audience"],
+
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
+            services.AddAuthorization();
         }
         #endregion
 
