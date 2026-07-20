@@ -15,17 +15,24 @@ namespace SilentMoon.Application.Features.Users.Queries.Profile
     }
 
     public class GetUserProfileQueryHandler : IQueryHandler<GetUserProfileQuery, UserProfileResponse>
-    {
-        private readonly IProfileService _profileService;
+    {private readonly IUserService _userService;
 
-        public GetUserProfileQueryHandler(IProfileService profileService)
+        public GetUserProfileQueryHandler(IUserService userService)
         {
-            _profileService = profileService;
+            _userService = userService;
         }
 
         public async Task<Result<UserProfileResponse>> Handle(GetUserProfileQuery query, CancellationToken ct)
         {
-            return await _profileService.GetUserProfileAsync();
+            var user = await _userService.GetCurrentUserAsync();
+            return new UserProfileResponse
+            {
+                Email = user.Value.Email,
+                Id = user.Value.Id,
+                CreatedAt = DateTime.Now,
+                EmailVerified = user.Value.IsEmailConfirmed,
+                Name = user.Value.FirstName,
+            };
         }
     }
 

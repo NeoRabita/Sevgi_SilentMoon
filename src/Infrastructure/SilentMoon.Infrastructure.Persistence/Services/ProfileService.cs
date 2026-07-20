@@ -22,18 +22,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             _genericRepository = genericRepository;
         }
 
-        public async Task<UserProfileResponse> GetUserProfileAsync()
-        {
-            var user = await _userService.GetCurrentUserAsync();
-            return new UserProfileResponse
-            {
-                Email = user.Value.Email,
-                Id = user.Value.Id,
-                CreatedAt = DateTime.Now,
-                EmailVerified = user.Value.IsEmailConfirmed,
-                Name = user.Value.FirstName,
-            };
-        }
+        
 
         public async Task<Result<UpdateUserProfileResponse>> UpdateUserProfileAsync(string name)
         {
