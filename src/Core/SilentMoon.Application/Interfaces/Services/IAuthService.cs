@@ -12,7 +12,6 @@ namespace SilentMoon.Application.Interfaces.Services
     {
         Task<Result<ApplicationUser>> VerifyEmailAsync(string otpId, string code);
         Task<Result<RegisterResponse>> ResendOtp(string otpId);
-        Task<Result<string>> RegisterAsync(RegisterRequest request);
         Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken);
         //Task<Result<bool>> LoginAsync(AuthenticationRequest request);
         Task<Result<ApplicationUser>> GoogleLoginAsync(string idToken);

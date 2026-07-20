@@ -84,35 +84,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-        public async Task<Result<string>> RegisterAsync(RegisterRequest request)
-        {
-           
-                var existingUser = await _genericRepository.GetAsync(
-                    x => x.Email == request.Email);
-
-                if (existingUser is not null)
-                {
-                    return UserErrors.EmailNotUnique;
-                }
-
-                var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-                var user = new ApplicationUser
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    FirstName = request.Name,
-                    Email = request.Email,
-                    PasswordHash = passwordHash,
-                    IsEmailConfirmed = false,
-                };
-
-               await _genericRepository.AddAsync(user);
-
-                return user.Email;
-
-
-               
-        }
+      
 
         public async Task<Result<RegisterResponse>> ResendOtp(string otpId)
         {
