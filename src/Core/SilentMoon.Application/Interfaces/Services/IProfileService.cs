@@ -10,6 +10,6 @@ namespace SilentMoon.Application.Interfaces.Services
     public interface IProfileService
     {
         Task<UserProfileResponse> GetUserProfileAsync();
-
+        Task<Result<UpdateUserProfileResponse>> UpdateUserProfileAsync(string name);
     }
 }
