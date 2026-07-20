@@ -19,15 +19,18 @@ namespace SilentMoon.Application.Features.Users.Commands.GoogleAuthorize
         private readonly IAuthService _authService;
         private readonly IJwtService _jwtService;
         private readonly IAppLogger<GoogleLoginCommandHandler> _logger;
+        private readonly IUow _uow;
 
         public GoogleLoginCommandHandler(
             IAuthService authService,
             IJwtService jwtService,
-            IAppLogger<GoogleLoginCommandHandler> logger)
+            IAppLogger<GoogleLoginCommandHandler> logger,
+            IUow uow)
         {
             _authService = authService;
             _jwtService = jwtService;
             _logger = logger;
+            _uow = uow;
         }
 
         public async Task<Result<AuthenticationResponse>> Handle(
@@ -42,6 +45,7 @@ namespace SilentMoon.Application.Features.Users.Commands.GoogleAuthorize
                 return user.Error;
             }
 
+            await _uow.UserRepository.AddAsync(user.Value);
             var jwt = _jwtService.GenerateToken(user.Value.Id, user.Value.Email);
             var refreshToken = _jwtService.GenerateRefreshToken(user.Value.Id);
             _logger.LogInformation(

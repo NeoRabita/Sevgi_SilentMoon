@@ -45,7 +45,6 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                     
                 };
 
-                await _genericRepository.AddAsync(user);
             }
 
             return Result<ApplicationUser>.Success(user);
@@ -77,30 +76,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-        public async Task<Result<ApplicationUser>> VerifyEmailAsync(string otpId, string code)
-        {
-            var otp = await _otpService.VerifyOtpCodeAsync(otpId,code);
-            if (otp.IsFailure)
-            {
-                return OtpErrors.InvalidCode;
-            }
-
-            var user = await _genericRepository.GetAsync(
-                    x => x.Email == otp.Value.Email);
-            if (user == null)
-            {
-                return UserErrors.NotFoundByEmail;
-            }
-            if (!user.IsEmailConfirmed)
-            {
-                user.IsEmailConfirmed = true;
-                _genericRepository.Update(user);
-            }
-
-            return user;
-
-
-        }
+      
 
 
 

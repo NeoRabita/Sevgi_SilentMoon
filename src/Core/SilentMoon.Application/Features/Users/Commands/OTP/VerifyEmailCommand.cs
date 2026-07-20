@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using SilentMoon.Application.DTOs.Account;
 using SilentMoon.Application.DTOs.JWT;
 using SilentMoon.Application.Interfaces.Logging;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
 using SilentMoon.Domain.Entities;
+using SilentMoon.Domain.Errors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 
 namespace SilentMoon.Application.Features.Users.Commands.OTP
@@ -23,45 +25,59 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
 
     public class VerifyEmailCommandHandler :ICommandHandler<VerifyEmailCommand, AuthenticationResponse>
     {
-        private readonly IAuthService _authService;
         private readonly IAppLogger<VerifyEmailCommandHandler> _logger;
         private readonly IJwtService _jwtService;
-        private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
-        public VerifyEmailCommandHandler(IAuthService authService, IAppLogger<VerifyEmailCommandHandler> logger,  IJwtService jwtService, IGenericRepository<RefreshToken> genericRepository)
+        private readonly IUow _uow;
+        private readonly IOtpService _otpService;
+        public VerifyEmailCommandHandler( IAppLogger<VerifyEmailCommandHandler> logger, IJwtService jwtService,IUow uow, IOtpService otpService)
         {
-            _authService = authService;
             _logger = logger;
             _jwtService = jwtService;
-            _refreshTokenRepository = genericRepository;
+            _uow = uow;
+            _otpService = otpService;
         }
         public async Task<Result<AuthenticationResponse>> Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
         {
             if (command == null)
                 return Error.NullValue;
-            var result = await _authService.VerifyEmailAsync(command.OtpId,command.Code);
-            if (result.IsFailure)
+
+            var otp = await _otpService.VerifyOtpCodeAsync(command.OtpId, command.Code);
+            if (otp.IsFailure)
             {
-                _logger.LogWarning("OTP verification failed for OtpId: {OtpId}. Error: {Error}", command.OtpId, result.Error);
-                return result.Error;
+                return OtpErrors.InvalidCode;
             }
 
+            var user = await _uow.UserRepository.GetAsync(
+                    x => x.Email == otp.Value.Email);
+            if (user == null)
+            {
+                _logger.LogWarning("OTP verification failed for OtpId: User not found: {Email}", otp.Value.Email);
+                return UserErrors.NotFoundByEmail;
+            }
+            if (!user.IsEmailConfirmed)
+            {
+                user.IsEmailConfirmed = true;
+                _uow.UserRepository.Update(user);
+            }
+
+
             _logger.LogInformation("OTP verification successful for OtpId: {OtpId}", command.OtpId);
-           _logger.LogInformation("User {UserId} has successfully verified their email.", result.Value.Id);
+           _logger.LogInformation("User {UserId} has successfully verified their email.", user.Id);
 
 
-            var jwt = _jwtService.GenerateToken(result.Value.Id, result.Value.Email);
+            var jwt = _jwtService.GenerateToken(user.Id, user.Email);
 
 
-            var refreshToken = _jwtService.GenerateRefreshToken(result.Value.Id);
-            await _refreshTokenRepository.AddAsync(refreshToken);
+            var refreshToken = _jwtService.GenerateRefreshToken(user.Id);
+            await _uow.RefreshTokenRepository.AddAsync(refreshToken);
 
-            _logger.LogInformation("JWT and Refresh Token created for User {UserId}", result.Value.Id);
+            _logger.LogInformation("JWT and Refresh Token created for User {UserId}", user.Id);
 
             return Result<AuthenticationResponse>.Success(new AuthenticationResponse
             {
-                Name = result.Value.FirstName,
+                Name = user.FirstName,
                 Jwt = jwt,
-                Email = result.Value.Email,
+                Email = user.Email,
                 RefreshToken = new RefreshTokenDto(refreshToken.Token, new DateTimeOffset(refreshToken.Expires, TimeSpan.Zero))
             });
 
