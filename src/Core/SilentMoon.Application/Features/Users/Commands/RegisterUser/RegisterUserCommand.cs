@@ -27,14 +27,12 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
 
     public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, RegisterResponse>
     {
-        private readonly IAuthService _authService;
         private readonly IAppLogger<RegisterUserCommandHandler> _logger;
         private readonly IOtpService _otpService;
         private readonly IUow _ouw;
 
-        public RegisterUserCommandHandler(IAuthService authService, IAppLogger<RegisterUserCommandHandler> logger, IOtpService otpService, IUow ouw)
+        public RegisterUserCommandHandler( IAppLogger<RegisterUserCommandHandler> logger, IOtpService otpService, IUow ouw)
         {
-            _authService = authService;
             _logger = logger;
             _otpService = otpService;
             _ouw = ouw;

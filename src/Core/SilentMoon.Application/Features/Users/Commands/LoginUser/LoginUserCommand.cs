@@ -28,15 +28,13 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
     {
         private readonly IAppLogger<LoginUserHandler> _logger;
         private readonly IJwtService _jwtService;
-        private readonly IGenericRepository<ApplicationUser> _genericRepository;
-        private readonly IGenericRepository<RefreshToken> _refreshTokensRepository;
+        private readonly IUow _uow;
 
-        public LoginUserHandler( IAppLogger<LoginUserHandler> logger, IJwtService jwtService, IGenericRepository<ApplicationUser> genericRepository, IGenericRepository<RefreshToken> refreshTokensRepository)
+        public LoginUserHandler(IAppLogger<LoginUserHandler> logger, IJwtService jwtService, IUow uow)
         {
             _logger = logger;
             _jwtService = jwtService;
-            _genericRepository = genericRepository;
-            _refreshTokensRepository = refreshTokensRepository;
+            _uow = uow;
         }
 
         public async Task<Result<AuthenticationResponse>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
@@ -45,7 +43,7 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
 
             if (command == null)
                 return Error.NullValue;
-            var existingUser = await _genericRepository.GetAsync(
+            var existingUser = await _uow.UserRepository.GetAsync(
                   x => x.Email == command.Email);
 
             if (existingUser is null)
@@ -69,16 +67,16 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
             var jwt = _jwtService.GenerateToken(existingUser.Id, existingUser.Email);
 
             var existingRefreshToken =
-                await _refreshTokensRepository.GetAsync(x => x.UserId == existingUser.Id);
+                await _uow.RefreshTokenRepository.GetAsync(x => x.UserId == existingUser.Id);
 
             if (existingRefreshToken is null)
             {
                 existingRefreshToken = _jwtService.GenerateRefreshToken(existingUser.Id);
-                await _refreshTokensRepository.AddAsync(existingRefreshToken);
+                await _uow.RefreshTokenRepository.AddAsync(existingRefreshToken);
             }
             else
             {
-                _refreshTokensRepository.Update(_jwtService.UpdateRefreshToken(existingRefreshToken));
+                _uow.RefreshTokenRepository.Update(_jwtService.UpdateRefreshToken(existingRefreshToken));
             }
 
 
