@@ -52,37 +52,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-        public async Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken)
-        {
-            var token=await _genericTokenRepository.GetAsync(r=>r.Token==refreshToken);
-            if (token is null) { return UserErrors.Unauthorized(); }
-
-            if (!token.IsActive)
-            {
-                return UserErrors.Unauthorized();
-            }
-
-            var user = await _genericRepository.GetAsync(
-             x => x.Id == token.UserId);
-
-            if (user is null)
-                return UserErrors.NotFoundByEmail;
-            var jwt = _jwtService.GenerateToken(user.Id, user.Email);
-
-            _genericTokenRepository.Update(_jwtService.UpdateRefreshToken(token));
-
-            return Result<AuthenticationResponse>.Success(
-                new AuthenticationResponse
-                {
-                    Name = user.FirstName,
-                    Email = user.Email,
-                    Jwt = jwt,
-                    RefreshToken = new RefreshTokenDto(
-                        token.Token,
-                        new DateTimeOffset(token.Expires, TimeSpan.Zero))
-                });
-
-        }
+       
 
       
 
