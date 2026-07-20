@@ -3,17 +3,21 @@ using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Infrastructure.Persistence.Contexts;
 using System.Threading.Tasks;
 using System.Threading;
+using SilentMoon.Domain.Entities;
 
 public class Uow : IUow
 {
     private readonly AppDbContext _context;
     private IDbContextTransaction? _transaction;
-
+    public IGenericRepository<ApplicationUser> UserRepository { get; }
+    public IGenericRepository<RefreshToken> RefreshTokenRepository { get; }
 
     public Uow(
-        AppDbContext context)
+        AppDbContext context, IGenericRepository<ApplicationUser> userRepository, IGenericRepository<RefreshToken> refreshTokenRepository)
     {
         _context = context;
+        UserRepository = userRepository;
+        RefreshTokenRepository = refreshTokenRepository;
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

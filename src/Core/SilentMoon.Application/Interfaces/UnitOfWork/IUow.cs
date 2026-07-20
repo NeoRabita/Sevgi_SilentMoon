@@ -1,10 +1,13 @@
 using SilentMoon.Application.Interfaces.Repositories;
-using System.Threading.Tasks;
-using System.Threading;
+using SilentMoon.Domain.Entities;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 public interface IUow : IDisposable
 {
+     IGenericRepository<ApplicationUser> UserRepository { get; }
+    IGenericRepository<RefreshToken> RefreshTokenRepository { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task BeginTransactionAsync();
     Task CommitAsync();
