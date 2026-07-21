@@ -16,15 +16,11 @@ namespace SilentMoon.Infrastructure.Persistence.Services
     public class AuthService : IAuthService
     {
         private readonly IOtpService _otpService;
-        private readonly IJwtService _jwtService;
         private readonly IGenericRepository<ApplicationUser> _genericRepository;
-        private readonly IGenericRepository<RefreshToken> _genericTokenRepository;
 
-        public AuthService(IOtpService otpService, IJwtService jwtService, IGenericRepository<RefreshToken> genericTokenRepository, IGenericRepository<ApplicationUser> genericRepository)
+        public AuthService(IOtpService otpService, IJwtService jwtService, IGenericRepository<ApplicationUser> genericRepository)
         {
             _otpService = otpService;
-            _jwtService = jwtService;
-            _genericTokenRepository = genericTokenRepository;
             _genericRepository = genericRepository;
         }
 
