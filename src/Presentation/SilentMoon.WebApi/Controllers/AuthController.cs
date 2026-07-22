@@ -8,6 +8,7 @@ using SilentMoon.Application.Features.Users.Commands.OTP;
 using SilentMoon.Application.Features.Users.Commands.LoginUser;
 using SilentMoon.Application.Features.Users.Commands.Token;
 using SilentMoon.Application.Features.Users.Commands.GoogleAuthorize;
+using SilentMoon.Application.Features.Users.Commands.ForgotPassword;
 
 namespace SilentMoon.WebApi.Controllers
 {
@@ -64,6 +65,24 @@ namespace SilentMoon.WebApi.Controllers
             return HandleResult(result);
 
         }
+
+
+        [HttpPost("confirm-email")]
+        public async Task<IResult> ConfirmEmail([FromBody] ConfirmEmailCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+
+        [HttpPatch("forgot-password")]
+        public async Task<IResult> ForgotPassword([FromBody]ResetPasswordCommand command)
+        {
+            var result = await Dispatcher.Send(command);
+            return HandleResult(result);
+
+        }
+
 
 
 

@@ -1,9 +1,11 @@
-﻿using SilentMoon.Application.DTOs.Email;
+﻿using Microsoft.Extensions.Options;
+using SilentMoon.Application.DTOs.Email;
 using SilentMoon.Application.Interfaces.Caching;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
 using SilentMoon.Domain.Entities;
 using SilentMoon.Domain.Errors;
+using SilentMoon.Infrastructure.Persistence.Settings;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -17,12 +19,13 @@ namespace SilentMoon.Infrastructure.Persistence.Services
     {
         private readonly IEmailService _emailService;
         private readonly ICacheService _cacheService;
+        private APIAppSettings _apiSettings;
 
-
-        public OtpService( IEmailService emailService, ICacheService cacheService)
+        public OtpService(IEmailService emailService, ICacheService cacheService, IOptions<APIAppSettings> apiSettings)
         {
             _emailService = emailService;
             _cacheService = cacheService;
+            _apiSettings = apiSettings.Value;
         }
 
         public async Task<OTPCode> CreateAndSendOtpCodeAsync(string email, string subject, string body)
@@ -35,12 +38,12 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 Code = code,
                 Email = email,
                 CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(5),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_apiSettings.MailSettings.OtpExpireTime),
                 Attempts = 0
             };
 
             var key = $"otp:{otp.Id}";
-            await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(5));
+            await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.MailSettings.OtpExpireTime));
 
             await _emailService.SendAsync(new EmailRequest
             {
@@ -80,7 +83,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             if(otp.Code != code)
             {
                 otp.Attempts++;
-                await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(5));
+                await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.MailSettings.OtpExpireTime));
                 return OtpErrors.InvalidCode;
             }
 
