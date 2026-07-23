@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using SilentMoon.Infrastructure.Persistence.Contexts;
@@ -11,9 +12,11 @@ using SilentMoon.Infrastructure.Persistence.Contexts;
 namespace SilentMoon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260722183017_TopicAdded")]
+    partial class TopicAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,28 +125,28 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2026, 7, 23, 23, 31, 29, 836, DateTimeKind.Local).AddTicks(5632),
+                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1854),
                             Slug = "Sleep",
                             Title = "Sleepy"
                         },
                         new
                         {
                             Id = 2,
-                            CreateDate = new DateTime(2026, 7, 23, 23, 31, 29, 836, DateTimeKind.Local).AddTicks(5646),
+                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1871),
                             Slug = "Stress",
                             Title = "Stressed"
                         },
                         new
                         {
                             Id = 3,
-                            CreateDate = new DateTime(2026, 7, 23, 23, 31, 29, 836, DateTimeKind.Local).AddTicks(5647),
+                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1873),
                             Slug = "Anxiety",
                             Title = "Anxiety"
                         },
                         new
                         {
                             Id = 4,
-                            CreateDate = new DateTime(2026, 7, 23, 23, 31, 29, 836, DateTimeKind.Local).AddTicks(5649),
+                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1874),
                             Slug = "Meditation",
                             Title = "Meditational"
                         });
@@ -157,7 +160,10 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("TopicId")
+                    b.Property<string>("TopicId")
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<int?>("TopicId1")
                         .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("UserId")
@@ -165,7 +171,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("TopicId1");
 
                     b.HasIndex("UserId");
 
@@ -185,9 +191,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("SilentMoon.Domain.Entities.Topic", "Topic")
                         .WithMany("UserTopics")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TopicId1");
 
                     b.HasOne("SilentMoon.Domain.Entities.ApplicationUser", "User")
                         .WithMany("UserTopics")

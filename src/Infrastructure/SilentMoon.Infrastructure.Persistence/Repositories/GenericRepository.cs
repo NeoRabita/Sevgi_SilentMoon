@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Infrastructure.Persistence.Contexts;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Linq.Expressions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace SilentMoon.Infrastructure.Persistence.Repositories
 {
@@ -50,9 +52,18 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
             return await _dbSet.FindAsync(id, cancellationToken);
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<T>> GetAllAsync(
+      Expression<Func<T, bool>> predicate = null,
+      CancellationToken cancellationToken = default)
         {
-            return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
+            IQueryable<T> query = _dbSet;
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return await query.ToListAsync(cancellationToken);
         }
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)

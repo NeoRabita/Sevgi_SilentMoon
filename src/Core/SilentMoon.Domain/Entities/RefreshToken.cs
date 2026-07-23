@@ -5,7 +5,7 @@ using SilentMoon.Domain.Common;
 namespace SilentMoon.Domain.Entities
 {
     [Table("RefreshTokens")]
-    public class RefreshToken : BaseEntity
+    public class RefreshToken : BaseEntity<int>
     {
         public string Token { get; set; }
         public string UserId { get; set; }

@@ -11,7 +11,7 @@ namespace SilentMoon.Application.Interfaces.Repositories
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate=null,CancellationToken cancellationToken = default);
 
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
 

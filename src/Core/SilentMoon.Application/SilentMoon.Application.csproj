@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Pomodoros\**" />
+    <EmbeddedResource Remove="Features\Pomodoros\**" />
+    <None Remove="Features\Pomodoros\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
@@ -18,8 +24,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\ViewModels\" />
-    <Folder Include="Features\Pomodoros\Commands\" />
-    <Folder Include="Features\Pomodoros\Queries\" />
     <Folder Include="Mappings\" />
   </ItemGroup>
 

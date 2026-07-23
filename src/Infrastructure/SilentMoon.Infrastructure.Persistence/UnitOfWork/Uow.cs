@@ -12,12 +12,17 @@ public class Uow : IUow
     public IGenericRepository<ApplicationUser> UserRepository { get; }
     public IGenericRepository<RefreshToken> RefreshTokenRepository { get; }
 
+    public IGenericRepository<Topic> TopicRepository { get; }
+    public IGenericRepository<UserTopic> UserTopicRepository { get; }
+
     public Uow(
-        AppDbContext context, IGenericRepository<ApplicationUser> userRepository, IGenericRepository<RefreshToken> refreshTokenRepository)
+        AppDbContext context, IGenericRepository<ApplicationUser> userRepository, IGenericRepository<RefreshToken> refreshTokenRepository, IGenericRepository<Topic> topicRepository, IGenericRepository<UserTopic> userTopicRepository)
     {
         _context = context;
         UserRepository = userRepository;
         RefreshTokenRepository = refreshTokenRepository;
+        TopicRepository = topicRepository;
+        UserTopicRepository = userTopicRepository;
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

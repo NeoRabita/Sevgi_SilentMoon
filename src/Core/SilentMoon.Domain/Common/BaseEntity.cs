@@ -5,8 +5,9 @@ using System.Text;
 
 namespace SilentMoon.Domain.Common
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity<TKey>
     {
-        public virtual int Id { get; set; }
+        public virtual TKey Id { get; set; }
+        public virtual DateTime CreateDate{ get; set; }= DateTime.Now;
     }
 }
