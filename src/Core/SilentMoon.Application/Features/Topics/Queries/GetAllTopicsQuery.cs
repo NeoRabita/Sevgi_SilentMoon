@@ -29,19 +29,10 @@ namespace SilentMoon.Application.Features.Topics.Queries
         public async Task<Result<IEnumerable<TopicResponse>>> Handle(GetAllTopicsQuery query, CancellationToken ct)
         {
             _logger.LogInformation("Get all topics process started");
-            var list = await _uow.TopicRepository.GetAllAsync(cancellationToken:ct);
-
-            var response = list.Select(x => new TopicResponse
-            {
-                Id = x.Id,
-                Slug = x.Slug,
-                Title = x.Title,
-                IconKey = x.IconKey,
-                ColorHex = x.ColorHex
-            });
+            var list = await _uow.TopicRepository.GetAllTopicsAsync();
 
             _logger.LogInformation("Get all topics process ended");
-            return Result<IEnumerable<Topic>>.Success(response);
+            return Result<IEnumerable<Topic>>.Success(list);
         }
     }
 }

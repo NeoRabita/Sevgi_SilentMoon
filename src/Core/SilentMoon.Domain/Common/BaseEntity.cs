@@ -9,5 +9,6 @@ namespace SilentMoon.Domain.Common
     {
         public virtual TKey Id { get; set; }
         public virtual DateTime CreateDate{ get; set; }= DateTime.Now;
+        public virtual bool IsDeleted { get; set; }= false;
     }
 }

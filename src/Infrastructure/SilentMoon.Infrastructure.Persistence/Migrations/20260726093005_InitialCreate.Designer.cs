@@ -12,8 +12,8 @@ using SilentMoon.Infrastructure.Persistence.Contexts;
 namespace SilentMoon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260722183017_TopicAdded")]
-    partial class TopicAdded
+    [Migration("20260726093005_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("NUMBER(1)");
 
                     b.Property<bool>("IsEmailConfirmed")
                         .HasColumnType("NUMBER(1)");
@@ -72,6 +75,9 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("NUMBER(1)");
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("NUMBER(1)");
@@ -111,6 +117,9 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                     b.Property<string>("IconKey")
                         .HasColumnType("NVARCHAR2(2000)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("NUMBER(1)");
+
                     b.Property<string>("Slug")
                         .HasColumnType("NVARCHAR2(2000)");
 
@@ -125,28 +134,32 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1854),
+                            CreateDate = new DateTime(2026, 7, 26, 13, 30, 5, 9, DateTimeKind.Local).AddTicks(6324),
+                            IsDeleted = false,
                             Slug = "Sleep",
                             Title = "Sleepy"
                         },
                         new
                         {
                             Id = 2,
-                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1871),
+                            CreateDate = new DateTime(2026, 7, 26, 13, 30, 5, 9, DateTimeKind.Local).AddTicks(6335),
+                            IsDeleted = false,
                             Slug = "Stress",
                             Title = "Stressed"
                         },
                         new
                         {
                             Id = 3,
-                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1873),
+                            CreateDate = new DateTime(2026, 7, 26, 13, 30, 5, 9, DateTimeKind.Local).AddTicks(6337),
+                            IsDeleted = false,
                             Slug = "Anxiety",
                             Title = "Anxiety"
                         },
                         new
                         {
                             Id = 4,
-                            CreateDate = new DateTime(2026, 7, 22, 22, 30, 17, 50, DateTimeKind.Local).AddTicks(1874),
+                            CreateDate = new DateTime(2026, 7, 26, 13, 30, 5, 9, DateTimeKind.Local).AddTicks(6369),
+                            IsDeleted = false,
                             Slug = "Meditation",
                             Title = "Meditational"
                         });
@@ -160,10 +173,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("TopicId")
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<int?>("TopicId1")
+                    b.Property<int>("TopicId")
                         .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("UserId")
@@ -171,7 +181,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TopicId1");
+                    b.HasIndex("TopicId");
 
                     b.HasIndex("UserId");
 
@@ -191,7 +201,9 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("SilentMoon.Domain.Entities.Topic", "Topic")
                         .WithMany("UserTopics")
-                        .HasForeignKey("TopicId1");
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SilentMoon.Domain.Entities.ApplicationUser", "User")
                         .WithMany("UserTopics")

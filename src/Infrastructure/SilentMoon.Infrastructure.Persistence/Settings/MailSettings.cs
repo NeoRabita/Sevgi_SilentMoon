@@ -11,5 +11,6 @@ namespace SilentMoon.Infrastructure.Persistence.Settings
         public string DisplayName { get; set; }
         public bool SSL { get; set; }
         public int OtpExpireTime { get; set; }
+        //public int OtpAttempts { get; set; }
     }
 }

@@ -37,24 +37,9 @@ namespace SilentMoon.Application.Features.Topics.Queries
                 return UserErrors.Unauthorized();
             }
 
-            var userTopicList =await _uow.UserTopicRepository.GetAllAsync(ut=>ut.UserId==user.Value.Id,ct);
-            var topicIds = userTopicList
-    .Select(x => x.TopicId)
-    .ToList();
+            var topicList = await _uow.TopicRepository.GetSelectedTopicsAsync(user.Value.Id);
 
-            var topics = await _uow.TopicRepository.GetAllAsync(
-    t => topicIds.Contains(t.Id),
-    ct);
-            var response = topics.Select(x => new TopicResponse
-            {
-                Id = x.Id,
-                Slug = x.Slug,
-                Title = x.Title,
-                IconKey = x.IconKey,
-                ColorHex = x.ColorHex
-            });
-
-            return Result<IEnumerable<Topic>>.Success(response);
+            return Result<IEnumerable<Topic>>.Success(topicList);
 
         }
     }
