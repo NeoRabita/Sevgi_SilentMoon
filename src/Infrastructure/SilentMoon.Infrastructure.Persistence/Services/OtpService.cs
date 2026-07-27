@@ -71,7 +71,6 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             return Result<OTPCode>.Success(otp);
 
         }
-
         public async Task<Result<OTPCode>> VerifyOtpCodeAsync(string otpId,string code)
         {
             var key = $"otp:{otpId}";
