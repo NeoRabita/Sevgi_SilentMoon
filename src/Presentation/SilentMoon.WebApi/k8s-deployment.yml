@@ -1,37 +1,43 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapi-deployment
+  name: silentmoon-webapi
 spec:
-  # Number of API instances you want to run
   replicas: 3
   selector:
     matchLabels:
-      app: webapi
+      app: silentmoon-webapi
   template:
     metadata:
       labels:
-        app: webapi
+        app: silentmoon-webapi
     spec:
       containers:
-      - name: webapi
-        # Local image name without Docker Hub prefix
-        image: my-local-webapi:latest
-        # Crucial: Tells Kubernetes to use the local image and not check the internet
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 8080
+        - name: silentmoon-webapi
+          # Make sure this matches the IMAGE_NAME in your TeamCity script
+          image: myapi-dev-image:latest
+          # Do not pull from Docker Hub, use the local image
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ASPNETCORE_URLS
+              value: "http://+:8080"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapi-service
+  name: silentmoon-webapi-service
 spec:
-  # Expose the service locally/externally
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8080
+  # Bypass Traefik by using NodePort instead of LoadBalancer
+  type: NodePort
   selector:
-    app: webapi
-
+    app: silentmoon-webapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      # The explicit port you will open in the browser
+      nodePort: 30080
