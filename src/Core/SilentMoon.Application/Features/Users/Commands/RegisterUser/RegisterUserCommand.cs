@@ -43,8 +43,7 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
             
             _logger.LogInformation("User Register started");
 
-            if(command==null)
-                    return Error.NullValue;
+            
 
             var existingUser = await _ouw.UserRepository.GetAsync(
                               x => x.Email == command.Email);

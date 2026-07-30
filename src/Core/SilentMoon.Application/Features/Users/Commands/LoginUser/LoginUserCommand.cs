@@ -41,8 +41,7 @@ namespace SilentMoon.Application.Features.Users.Commands.LoginUser
         {
             _logger.LogInformation("User Login started");
 
-            if (command == null)
-                return Error.NullValue;
+          
             var existingUser = await _uow.UserRepository.GetAsync(
                   x => x.Email == command.Email);
 

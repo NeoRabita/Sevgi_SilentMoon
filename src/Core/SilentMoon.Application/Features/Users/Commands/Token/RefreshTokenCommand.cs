@@ -35,8 +35,7 @@ namespace SilentMoon.Application.Features.Users.Commands.Token
         public async Task<Result<AuthenticationResponse>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Refresh token process started.");
-            if (command == null)
-                return Error.NullValue;
+           
             var token = await _uow.RefreshTokenRepository.GetAsync(r => r.Token == command.RefreshToken);
             if (token is null) { return UserErrors.Unauthorized(); }
             if (!token.IsActive)

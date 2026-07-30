@@ -38,8 +38,7 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
         }
         public async Task<Result<AuthenticationResponse>> Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
         {
-            if (command == null)
-                return Error.NullValue;
+           
 
             var otp = await _otpService.VerifyOtpCodeAsync(command.OtpId, command.Code);
             if (otp.IsFailure)

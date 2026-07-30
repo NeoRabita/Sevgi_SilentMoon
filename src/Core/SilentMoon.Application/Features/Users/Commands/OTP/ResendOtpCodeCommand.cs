@@ -30,8 +30,7 @@ namespace SilentMoon.Application.Features.Users.Commands.OTP
         public async Task<Result<RegisterResponse>> Handle(ResendOtpCodeCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Resend OTP code started for OtpId: {OtpId}", command.OtpId);
-            if (command == null)
-                return Error.NullValue;
+           
             var result = await _authService.ResendOtp(command.OtpId);
             if (result.IsFailure)
             {
