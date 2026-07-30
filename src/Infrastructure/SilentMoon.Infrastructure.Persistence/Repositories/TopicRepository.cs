@@ -30,7 +30,7 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
             t.Slug,
             t.IconKey,
             t.ColorHex
-        FROM Topics t
+        FROM VW_TOPICS t
         INNER JOIN UserTopics ut
             ON ut.TopicId = t.Id
         WHERE ut.UserId = :USER_ID";
@@ -50,7 +50,7 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
             Slug,
             IconKey,
             ColorHex
-        FROM Topics
+        FROM VW_TOPICS
         ORDER BY Id";
 
             return await dapper.GetAllAsync<TopicResponse>(sql);
