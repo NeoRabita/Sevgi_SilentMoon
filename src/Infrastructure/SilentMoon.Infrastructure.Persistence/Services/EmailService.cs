@@ -12,9 +12,9 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 {
     public class EmailService : IEmailService
     {
-        public APIAppSettings _apiSettings;
+        public MailSettings _apiSettings;
 
-        public EmailService(IOptions<APIAppSettings> apiSettings)
+        public EmailService(IOptions<MailSettings> apiSettings)
         {
             _apiSettings = apiSettings.Value;
         }
@@ -24,16 +24,16 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             try
             {
                 var mail = new MailMessage();
-                mail.From = new MailAddress(request.From ?? _apiSettings.MailSettings.EmailFrom, _apiSettings.MailSettings.DisplayName);
+                mail.From = new MailAddress(request.From ?? _apiSettings.EmailFrom, _apiSettings.DisplayName);
                 mail.To.Add(request.To);
                 mail.Subject = request.Subject;
                 var htmlView = AlternateView.CreateAlternateViewFromString(request.Body, null, "text/html");
                 mail.IsBodyHtml = true;
                 mail.AlternateViews.Add(htmlView);
-                using (var smtpClient = new SmtpClient(_apiSettings.MailSettings.SmtpHost, _apiSettings.MailSettings.SmtpPort))
+                using (var smtpClient = new SmtpClient(_apiSettings.SmtpHost, _apiSettings.SmtpPort))
                 {
-                    smtpClient.Credentials = new NetworkCredential(_apiSettings.MailSettings.SmtpUser, _apiSettings.MailSettings.SmtpPass);
-                    smtpClient.EnableSsl = _apiSettings.MailSettings.SSL;
+                    smtpClient.Credentials = new NetworkCredential(_apiSettings.SmtpUser, _apiSettings.SmtpPass);
+                    smtpClient.EnableSsl = _apiSettings.SSL;
                     await smtpClient.SendMailAsync(mail);
                 }
             }

@@ -19,9 +19,9 @@ namespace SilentMoon.Infrastructure.Persistence.Services
     {
         private readonly IEmailService _emailService;
         private readonly ICacheService _cacheService;
-        private APIAppSettings _apiSettings;
+        private MailSettings _apiSettings;
 
-        public OtpService(IEmailService emailService, ICacheService cacheService, IOptions<APIAppSettings> apiSettings)
+        public OtpService(IEmailService emailService, ICacheService cacheService, IOptions<MailSettings> apiSettings)
         {
             _emailService = emailService;
             _cacheService = cacheService;
@@ -38,12 +38,12 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 Code = code,
                 Email = email,
                 CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(_apiSettings.MailSettings.OtpExpireTime),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_apiSettings.OtpExpireTime),
                 Attempts = 0
             };
 
             var key = $"otp:{otp.Id}";
-            await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.MailSettings.OtpExpireTime));
+            await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.OtpExpireTime));
 
             await _emailService.SendAsync(new EmailRequest
             {
@@ -82,7 +82,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             if(otp.Code != code)
             {
                 otp.Attempts++;
-                await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.MailSettings.OtpExpireTime));
+                await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.OtpExpireTime));
                 return OtpErrors.InvalidCode;
             }
 

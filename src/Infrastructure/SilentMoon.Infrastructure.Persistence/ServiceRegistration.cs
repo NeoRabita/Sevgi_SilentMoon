@@ -26,8 +26,6 @@ namespace SilentMoon.Infrastructure.Persistence
     {
         public static void AddPersistenceRegistration(this IServiceCollection services, IConfiguration configuration)
         {
-            var cs = configuration["APIAppSettings:ConnectionString"];
-            Console.WriteLine(cs);
             services.AddDbContext<AppDbContext>(options =>
             options.UseOracle(configuration["APIAppSettings:ConnectionString"],
             b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
@@ -40,6 +38,7 @@ namespace SilentMoon.Infrastructure.Persistence
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerManager<>));
             services.AddScoped<ICacheService, RedisCacheService>();
             services.Configure<APIAppSettings>(configuration.GetSection("APIAppSettings"));
+            services.Configure<MailSettings>( configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IDapper, DapperClass>();

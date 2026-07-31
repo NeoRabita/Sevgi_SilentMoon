@@ -37,6 +37,7 @@ namespace SilentMoon.WebApi
                     {
                         config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true)
+                          .AddJsonFile("SMTP.json", optional: true, reloadOnChange: true)
                         .AddEnvironmentVariables();
                     });
                 }).UseNLog();
