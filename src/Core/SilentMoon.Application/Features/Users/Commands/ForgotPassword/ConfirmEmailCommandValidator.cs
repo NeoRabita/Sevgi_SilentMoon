@@ -11,12 +11,12 @@ namespace SilentMoon.Application.Features.Users.Commands.ForgotPassword
     {
         public ConfirmEmailCommandValidator()
         {
-            RuleFor(x => x.Request)
+            RuleFor(x => x.Email)
     .NotNull().WithMessage("Request is required.");
 
-            When(x => x.Request != null, () =>
+            When(x => x.Email!= null, () =>
             {
-                RuleFor(x => x.Request.Email)
+                RuleFor(x => x.Email)
                     .NotEmpty().WithMessage("Email is required.")
                     .EmailAddress().WithMessage("Invalid email address.");
             });
