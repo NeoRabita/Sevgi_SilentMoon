@@ -1,46 +1,33 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using SilentMoon.Application.Common.User;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
 using SilentMoon.Domain.Entities;
-using SilentMoon.Domain.Errors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace SilentMoon.Infrastructure.Persistence.Services
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly ICurrentUser _currentUser;
+    private readonly IGenericRepository<ApplicationUser> _repository;
+
+    public UserService(
+        ICurrentUser currentUser,
+        IGenericRepository<ApplicationUser> repository)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IGenericRepository<ApplicationUser> _genericRepository;
+        _currentUser = currentUser;
+        _repository = repository;
+    }
 
-        public UserService(IHttpContextAccessor httpContextAccessor, IGenericRepository<ApplicationUser> genericRepository)
-        {
-            _httpContextAccessor = httpContextAccessor;
-            _genericRepository = genericRepository;
-        }
+    public async Task<ApplicationUser> GetCurrentUserAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_currentUser.Email))
+            throw new UnauthorizedAccessException();
 
-        public async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            var principal = _httpContextAccessor.HttpContext?.User;
+        var user = await _repository.GetAsync(x => x.Email == _currentUser.Email);
 
-            if (principal?.Identity?.IsAuthenticated != true)
-                throw new UnauthorizedAccessException("User is not authenticated.");
+        if (user == null)
+            throw new UnauthorizedAccessException();
 
-            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (string.IsNullOrWhiteSpace(email))
-                throw new UnauthorizedAccessException("Email claim not found.");
-
-            var user = await _genericRepository.GetAsync(u => u.Email == email);
-
-            if (user is null)
-                throw new UnauthorizedAccessException("User not found.");
-
-            return user;
-        }
+        return user;
     }
 }

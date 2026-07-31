@@ -9,6 +9,7 @@ using SilentMoon.Application.Interfaces.Caching;
 using SilentMoon.Infrastructure.Persistence;
 using SilentMoon.Infrastructure.Persistence.Caching;
 using SilentMoon.WebApi.Extensions;
+using SilentMoon.WebApi.Middlewares;
 
 namespace SilentMoon.WebApi
 {
@@ -48,6 +49,7 @@ namespace SilentMoon.WebApi
             //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
+            app.UseMiddleware<CurrentUserMiddleware>();
             app.UseAuthorization();
             app.UseErrorHandling();
             app.UseSwaggerExtension(env, provider);

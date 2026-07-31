@@ -19,6 +19,7 @@ using SilentMoon.Infrastructure.Persistence.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SilentMoon.Application.Common.User;
 namespace SilentMoon.Infrastructure.Persistence
 {
     public static class ServiceRegistration
@@ -46,6 +47,7 @@ namespace SilentMoon.Infrastructure.Persistence
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<ITopicRepository, TopicRepository>();
+            services.AddScoped<ICurrentUser,CurrentUser>();
 
 
             RegisterDapperDomainMappings();
