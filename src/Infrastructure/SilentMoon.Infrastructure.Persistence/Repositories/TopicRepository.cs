@@ -16,7 +16,7 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
     {
         IDapper dapper;
 
-        public TopicRepository(IDapper dapper,AppDbContext dbContext):base(dbContext)
+        public TopicRepository(IDapper dapper, AppDbContext dbContext) : base(dbContext)
         {
             this.dapper = dapper;
         }
@@ -24,17 +24,16 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<TopicResponse>> GetSelectedTopicsAsync(string userId)
         {
             const string sql = @"
-        SELECT
-            t.Id,
-            t.Title,
-            t.Slug,
-            t.IconKey,
-            t.ColorHex
-        FROM VW_TOPICS t
-        INNER JOIN UserTopics ut
-            ON ut.TopicId = t.Id
-        WHERE ut.UserId = :USER_ID";
-
+SELECT
+    t.""Id"",
+    t.""Title"",
+    t.""Slug"",
+    t.""IconKey"",
+    t.""ColorHex""
+FROM ""VW_TOPICS"" t
+INNER JOIN ""UserTopics"" ut
+    ON ut.""TopicId"" = t.""Id""
+WHERE ut.""UserId"" = :USER_ID";
             var parameters = new DynamicParameters();
             parameters.Add("USER_ID", userId);
 
@@ -44,14 +43,14 @@ namespace SilentMoon.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<TopicResponse>> GetAllTopicsAsync()
         {
             const string sql = @"
-        SELECT
-            Id,
-            Title,
-            Slug,
-            IconKey,
-            ColorHex
-        FROM VW_TOPICS
-        ORDER BY Id";
+SELECT
+    ""Id"",
+    ""Title"",
+    ""Slug"",
+    ""IconKey"",
+    ""ColorHex""
+FROM ""VW_TOPICS""
+ORDER BY ""Id""";
 
             return await dapper.GetAllAsync<TopicResponse>(sql);
         }
