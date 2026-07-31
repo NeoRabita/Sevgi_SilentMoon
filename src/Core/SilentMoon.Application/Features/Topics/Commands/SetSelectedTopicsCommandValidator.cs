@@ -16,7 +16,7 @@ namespace SilentMoon.Application.Features.Topics.Commands
     .NotEmpty().WithMessage("At least one topic must be selected.");
 
             RuleForEach(x => x.TopicIds)
-                .GreaterThan(0).WithMessage("Invalid topic id.");
+                .Equal(0).WithMessage("Invalid topic id.");
         }
     }
 }
