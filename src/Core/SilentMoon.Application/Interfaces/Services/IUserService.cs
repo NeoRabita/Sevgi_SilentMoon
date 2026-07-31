@@ -6,7 +6,7 @@ namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<Result<ApplicationUser>> GetCurrentUserAsync();
+        Task<ApplicationUser> GetCurrentUserAsync();
 
 
     }

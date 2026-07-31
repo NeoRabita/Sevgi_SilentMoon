@@ -23,18 +23,24 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             _genericRepository = genericRepository;
         }
 
-        public async Task<Result<ApplicationUser>> GetCurrentUserAsync()
+        public async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            var userEmail = _httpContextAccessor.HttpContext?.User?
-     .FindFirst(ClaimTypes.Email)?
-     .Value;
-            var user = await _genericRepository.GetAsync(u => u.Email == userEmail);
-            if (user is null)
-            {
-                return UserErrors.NotFoundByEmail;
-            }
-            return user;
+            var principal = _httpContextAccessor.HttpContext?.User;
 
+            if (principal?.Identity?.IsAuthenticated != true)
+                throw new UnauthorizedAccessException("User is not authenticated.");
+
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrWhiteSpace(email))
+                throw new UnauthorizedAccessException("Email claim not found.");
+
+            var user = await _genericRepository.GetAsync(u => u.Email == email);
+
+            if (user is null)
+                throw new UnauthorizedAccessException("User not found.");
+
+            return user;
         }
     }
 }

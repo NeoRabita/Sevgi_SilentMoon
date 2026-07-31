@@ -27,11 +27,11 @@ namespace SilentMoon.Application.Features.Users.Queries.Profile
             var user = await _userService.GetCurrentUserAsync();
             return new UserProfileResponse
             {
-                Email = user.Value.Email,
-                Id = user.Value.Id,
+                Email = user.Email,
+                Id = user.Id,
                 CreatedAt = DateTime.Now,
-                EmailVerified = user.Value.IsEmailConfirmed,
-                Name = user.Value.FirstName,
+                EmailVerified = user.IsEmailConfirmed,
+                Name = user.FirstName,
             };
         }
     }

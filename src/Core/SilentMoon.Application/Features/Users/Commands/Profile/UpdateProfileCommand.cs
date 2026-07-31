@@ -36,15 +36,9 @@ namespace SilentMoon.Application.Features.Users.Commands.Profile
         public async Task<Result<UpdateUserProfileResponse>> Handle(UpdateProfileCommand command, CancellationToken ct)
         {
             _logger.LogInformation("Update profile process started");
-            var userResult = await _userService.GetCurrentUserAsync();
+            var user = await _userService.GetCurrentUserAsync();
 
-            if (userResult.IsFailure)
-            {
-                _logger.LogInformation("Update profile process failed");
-
-                return userResult.Error;
-            }
-            var user = userResult.Value;
+           
             user.FirstName = command.Name;
            _uow.UserRepository.Update(user);
             _logger.LogInformation("Update profile process succeeded. ");

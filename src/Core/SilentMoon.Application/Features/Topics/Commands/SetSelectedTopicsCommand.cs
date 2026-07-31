@@ -35,14 +35,11 @@ namespace SilentMoon.Application.Features.Topics.Commands
         {
             _logger.LogInformation("Set selected topics started");
             var user =await _userService.GetCurrentUserAsync();
-            if (user.IsFailure) { 
-                
-            _logger.LogInformation("Set selected topics :User not authorized");
-                return UserErrors.Unauthorized(); }
+            
             var userTopics = command.TopicIds
                   .Select(topicId => new UserTopic
                   {
-                      UserId = user.Value.Id,
+                      UserId = user.Id,
                       TopicId = topicId
                   });
 

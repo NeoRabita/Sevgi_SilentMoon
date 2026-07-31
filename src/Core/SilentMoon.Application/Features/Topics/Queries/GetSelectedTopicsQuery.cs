@@ -33,11 +33,9 @@ namespace SilentMoon.Application.Features.Topics.Queries
         public async Task<Result<IEnumerable<TopicResponse>>> Handle(GetSelectedTopicsQuery query, CancellationToken ct)
         {
          var user=await _userService.GetCurrentUserAsync();
-            if (user.IsFailure) {
-                return UserErrors.Unauthorized();
-            }
+            
 
-            var topicList = await _uow.TopicRepository.GetSelectedTopicsAsync(user.Value.Id);
+            var topicList = await _uow.TopicRepository.GetSelectedTopicsAsync(user.Id);
 
             return Result<IEnumerable<Topic>>.Success(topicList);
 
