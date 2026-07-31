@@ -26,6 +26,8 @@ namespace SilentMoon.Infrastructure.Persistence
     {
         public static void AddPersistenceRegistration(this IServiceCollection services, IConfiguration configuration)
         {
+            var cs = configuration["APIAppSettings:ConnectionString"];
+            Console.WriteLine(cs);
             services.AddDbContext<AppDbContext>(options =>
             options.UseOracle(configuration["APIAppSettings:ConnectionString"],
             b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));

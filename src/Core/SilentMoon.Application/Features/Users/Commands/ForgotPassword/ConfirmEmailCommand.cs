@@ -14,7 +14,7 @@ namespace SilentMoon.Application.Features.Users.Commands.ForgotPassword
 {
     public class ConfirmEmailCommand:ICommand<RegisterResponse>
     {
-        public ForgotPasswordRequest Request { get; set; }
+        public string Email{ get; set; }
 
     }
 
@@ -31,7 +31,7 @@ namespace SilentMoon.Application.Features.Users.Commands.ForgotPassword
 
         public async Task<Result<RegisterResponse>> Handle(ConfirmEmailCommand command, CancellationToken ct)
         {
-          var otp= await _otpService.CreateAndSendOtpCodeAsync(command.Request.Email, "Email Verification for Forgot Password", "Your verification code is: ");
+          var otp= await _otpService.CreateAndSendOtpCodeAsync(command.Email, "Email Verification for Forgot Password", "Your verification code is: ");
 
             _logger.LogInformation("User successfully created. OtpId: {OtpId}", otp.Id);
 
