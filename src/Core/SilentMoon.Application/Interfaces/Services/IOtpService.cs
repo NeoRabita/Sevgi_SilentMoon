@@ -9,7 +9,7 @@ namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IOtpService
     {
-        Task<OTPCode> CreateAndSendOtpCodeAsync(string email,string subject,string body);
+        Task<OTPCode> CreateOtpCodeAsync(string email,string subject,string body);
         Task<Result<OTPCode>> VerifyOtpCodeAsync(string otpId, string code);
         Task<Result<OTPCode>> GetOtpCodeAsync(string otpId);
     }

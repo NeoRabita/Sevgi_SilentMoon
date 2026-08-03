@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SilentMoon.Infrastructure.Messaging\SilentMoon.Infrastructure.Messaging.csproj" />
     <ProjectReference Include="..\..\Core\SilentMoon.Application\SilentMoon.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\SilentMoon.Infrastructure.Persistence\SilentMoon.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\..\Shared\SilentMoon.SharedKernel\SilentMoon.SharedKernel.csproj" />

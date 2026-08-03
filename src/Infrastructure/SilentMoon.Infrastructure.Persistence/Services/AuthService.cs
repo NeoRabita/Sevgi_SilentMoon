@@ -1,7 +1,9 @@
-﻿using SilentMoon.Application.DTOs.Account;
+﻿using Google.Apis.Auth;
+using SilentMoon.Application.DTOs.Account;
+using SilentMoon.Application.DTOs.JWT;
+using SilentMoon.Application.Interfaces.Messaging;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
-using SilentMoon.Application.DTOs.JWT;
 using SilentMoon.Domain.Entities;
 using SilentMoon.Domain.Errors;
 using System;
@@ -9,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Google.Apis.Auth;
 
 namespace SilentMoon.Infrastructure.Persistence.Services
 {
@@ -17,6 +18,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
     {
         private readonly IOtpService _otpService;
         private readonly IGenericRepository<ApplicationUser> _genericRepository;
+
 
         public AuthService(IOtpService otpService, IJwtService jwtService, IGenericRepository<ApplicationUser> genericRepository)
         {
@@ -47,32 +49,32 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 
         }
 
-       
-
-      
-
-        public async Task<Result<RegisterResponse>> ResendOtp(string otpId)
-        {
-            var otp=await _otpService.GetOtpCodeAsync(otpId);
-            if(otp.IsFailure)
-            {
-                return otp.Error;
-            }
-
-            var newOtp = await _otpService.CreateAndSendOtpCodeAsync(otp.Value.Email, "Email Verification", "Your verification code is: ");
-
-            return Result<RegisterResponse>.Success(new RegisterResponse
-            {
-                Message = "Please check your email for verification code.",
-                OtpId = newOtp.Id.ToString(),
-                OtpExpireAt = newOtp.ExpiresAt.ToShortDateString()
-            });
 
 
 
-        }
 
-      
+        //public async Task<Result<RegisterResponse>> ResendOtp(string otpId)
+        //{
+        //var otp = await _otpService.GetOtpCodeAsync(otpId);
+        //    if(otp.IsFailure)
+        //    {
+        //        return otp.Error;
+        //    }
+
+        //    var newOtp = await _otpService.CreateOtpCodeAsync(otp.Value.Email, "Email Verification", "Your verification code is: ");
+
+    //        return Result<RegisterResponse>.Success(new RegisterResponse
+    //        {
+    //            Message = "Please check your email for verification code.",
+    //            OtpId = newOtp.Id.ToString(),
+    //            OtpExpireAt = newOtp.ExpiresAt.ToShortDateString()
+    //});
+
+
+
+        //}
+
+
 
 
 

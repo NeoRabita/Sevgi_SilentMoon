@@ -13,7 +13,7 @@ namespace SilentMoon.WebApi.Controllers
     {
         
         [HttpGet("topics")]
-        public async Task<IResult> Topics(  )
+        public async Task<IResult> Topics()
         {
             var result = await Dispatcher.Send(new GetAllTopicsQuery());
             return HandleResult(result);
@@ -21,7 +21,7 @@ namespace SilentMoon.WebApi.Controllers
         }
         
         [HttpGet("me/topics")]
-        public async Task<IResult> SelectedTopics(  )
+        public async Task<IResult> SelectedTopics()
         {
             var result = await Dispatcher.Send(new GetSelectedTopicsQuery());
             return HandleResult(result);

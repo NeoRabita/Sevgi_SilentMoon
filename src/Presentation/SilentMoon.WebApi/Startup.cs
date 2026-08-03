@@ -10,6 +10,7 @@ using SilentMoon.Infrastructure.Persistence;
 using SilentMoon.Infrastructure.Persistence.Caching;
 using SilentMoon.WebApi.Extensions;
 using SilentMoon.WebApi.Middlewares;
+using SilentMoon.Infrastructure.Messaging;
 
 namespace SilentMoon.WebApi
 {
@@ -31,6 +32,7 @@ namespace SilentMoon.WebApi
             services.AddApplicationLayer();
             services.AddPersistenceRegistration(Configuration);
             services.AddPersistenceApiServices(Configuration);
+            services.AddMessagingRegistration(Configuration);
             services.AddSwaggerExtension();
             services.AddLocalization();
             services.AddServiceExtension();

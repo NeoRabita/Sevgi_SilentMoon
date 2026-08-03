@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SilentMoon.Infrastructure.Persistence.Settings
+namespace SilentMoon.Infrastructure.Messaging.Settings
 {
     public class RabbitMqSettings
     {

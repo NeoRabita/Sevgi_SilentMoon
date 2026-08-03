@@ -28,7 +28,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             _apiSettings = apiSettings.Value;
         }
 
-        public async Task<OTPCode> CreateAndSendOtpCodeAsync(string email, string subject, string body)
+        public async Task<OTPCode> CreateOtpCodeAsync(string email, string subject, string body)
         {
             var code = GenerateOtpCode();
 
@@ -45,12 +45,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             var key = $"otp:{otp.Id}";
             await _cacheService.SetAsync(key, otp, TimeSpan.FromMinutes(_apiSettings.OtpExpireTime));
 
-            await _emailService.SendAsync(new EmailRequest
-            {
-                To = email,
-                Subject = subject,
-                Body = $"{body}: {code}"
-            });
+          
 
             return otp;
 

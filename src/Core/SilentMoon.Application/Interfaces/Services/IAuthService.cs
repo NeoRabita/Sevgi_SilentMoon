@@ -10,7 +10,7 @@ namespace SilentMoon.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<Result<RegisterResponse>> ResendOtp(string otpId);
+        //Task<Result<RegisterResponse>> ResendOtp(string otpId);
         Task<Result<ApplicationUser>> GoogleLoginAsync(string idToken);
 
 

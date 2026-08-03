@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
 using SilentMoon.Application.DTOs.Account;
+using SilentMoon.Application.DTOs.Email;
 using SilentMoon.Application.Interfaces.Logging;
+using SilentMoon.Application.Interfaces.Messaging;
 using SilentMoon.Application.Interfaces.Repositories;
 using SilentMoon.Application.Interfaces.Services;
 using SilentMoon.Domain.Entities;
@@ -30,12 +32,14 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
         private readonly IAppLogger<RegisterUserCommandHandler> _logger;
         private readonly IOtpService _otpService;
         private readonly IUow _ouw;
+        private readonly IMessagePublisher _messagePublisher;
 
-        public RegisterUserCommandHandler( IAppLogger<RegisterUserCommandHandler> logger, IOtpService otpService, IUow ouw)
+        public RegisterUserCommandHandler(IAppLogger<RegisterUserCommandHandler> logger, IOtpService otpService, IUow ouw, IMessagePublisher messagePublisher)
         {
             _logger = logger;
             _otpService = otpService;
             _ouw = ouw;
+            _messagePublisher = messagePublisher;
         }
 
         public async Task<Result<RegisterResponse>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -65,9 +69,16 @@ namespace SilentMoon.Application.Features.Users.Commands.RegisterUser
             };
 
             await _ouw.UserRepository.AddAsync(user);   
-            var otp = await _otpService.CreateAndSendOtpCodeAsync(user.Email, "Email Verification", "Your verification code is: ");
+            var otp = await _otpService.CreateOtpCodeAsync(user.Email, "Email Verification", "Your verification code is: ");
+            await _messagePublisher.PublishAsync(
+    "email-queue",
+    new EmailRequest
+    {
+        To = user.Email,
+        Subject = "Email Verification",
+        Body = $"Your verification code is: {otp.Code}"
+    });
 
-         
             _logger.LogInformation("User successfully created. OtpId: {OtpId}", otp.Id);
 
             return Result<RegisterResponse>.Success(new RegisterResponse
