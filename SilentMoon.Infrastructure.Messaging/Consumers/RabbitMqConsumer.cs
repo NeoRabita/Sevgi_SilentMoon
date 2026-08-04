@@ -40,40 +40,49 @@ namespace SilentMoon.Infrastructure.Messaging.Consumers
             };
             using var _scope = _scopeFactory.CreateScope();
             var _emailService = _scope.ServiceProvider.GetService<IEmailService>();
-            var connection = await factory.CreateConnectionAsync(stoppingToken);
-            var channel = await connection.CreateChannelAsync(cancellationToken: stoppingToken);
-
-            await channel.QueueDeclareAsync(
-                queue: "email-queue",
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                cancellationToken: stoppingToken);
-
-            var consumer = new AsyncEventingBasicConsumer(channel);
-
-            consumer.ReceivedAsync += async (_, ea) =>
+            try
             {
-                var json = Encoding.UTF8.GetString(ea.Body.ToArray());
+                var connection = await factory.CreateConnectionAsync(stoppingToken);
+                var channel = await connection.CreateChannelAsync(cancellationToken: stoppingToken);
+                await channel.QueueDeclareAsync(
+    queue: "email-queue",
+    durable: true,
+    exclusive: false,
+    autoDelete: false,
+    cancellationToken: stoppingToken);
 
-                var request = JsonSerializer.Deserialize<EmailRequest>(json);
+                var consumer = new AsyncEventingBasicConsumer(channel);
 
-                if (request is not null)
+                consumer.ReceivedAsync += async (_, ea) =>
                 {
-                    await _emailService.SendAsync(request);
-                }
+                    var json = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                await channel.BasicAckAsync(
-                    deliveryTag: ea.DeliveryTag,
-                    multiple: false,
+                    var request = JsonSerializer.Deserialize<EmailRequest>(json);
+
+                    if (request is not null)
+                    {
+                        await _emailService.SendAsync(request);
+                    }
+
+                    await channel.BasicAckAsync(
+                        deliveryTag: ea.DeliveryTag,
+                        multiple: false,
+                        cancellationToken: stoppingToken);
+                };
+
+                await channel.BasicConsumeAsync(
+                    queue: "email-queue",
+                    autoAck: false,
+                    consumer: consumer,
                     cancellationToken: stoppingToken);
-            };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
 
-            await channel.BasicConsumeAsync(
-                queue: "email-queue",
-                autoAck: false,
-                consumer: consumer,
-                cancellationToken: stoppingToken);
+
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }

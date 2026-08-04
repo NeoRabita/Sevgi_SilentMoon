@@ -21,7 +21,7 @@ namespace SilentMoon.Infrastructure.Messaging
             IConfiguration configuration)
         {
             services.Configure<RabbitMqSettings>(
-                configuration.GetSection("RabbitMq"));
+                configuration.GetSection("APIAppSettings:RabbitMq"));
 
 
             services.AddSingleton<IMessagePublisher, RabbitMqProducer>();
