@@ -1,0 +1,12 @@
+{
+  "MailSettings": {
+    "EmailFrom": "noreplytestmail010@gmail.com",
+    "SmtpHost": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "SmtpUser": "noreplytestmail010@gmail.com",
+    "SmtpPass": "exropstqwtypfbhf",
+    "DisplayName": "MyPomodoro",
+    "SSL": true,
+    "OtpExpireTime": 5
+  }
+}

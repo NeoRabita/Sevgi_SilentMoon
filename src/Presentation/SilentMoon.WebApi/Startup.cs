@@ -53,7 +53,7 @@ namespace SilentMoon.WebApi
             app.UseAuthentication();
             app.UseMiddleware<CurrentUserMiddleware>();
             app.UseAuthorization();
-            app.UseErrorHandling();
+            //app.UseErrorHandling();
             app.UseSwaggerExtension(env, provider);
             app.UseEndpoints(endpoints =>
             {
