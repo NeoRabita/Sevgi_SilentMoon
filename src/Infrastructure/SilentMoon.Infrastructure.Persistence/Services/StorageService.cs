@@ -1,4 +1,6 @@
-﻿using SilentMoon.Application.Interfaces.Services;
+﻿using Microsoft.Extensions.Options;
+using SilentMoon.Application.Interfaces.Services;
+using SilentMoon.Infrastructure.Persistence.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,13 @@ namespace SilentMoon.Infrastructure.Persistence.Services
 {
     public class StorageService : IStorageService
     {
+        private readonly APIAppSettings _settings;
+
+        public StorageService(IOptions<APIAppSettings> settings)
+        {
+            _settings = settings.Value;
+        }
+
         public Task DownloadFileAsync()
         {
             throw new NotImplementedException();
