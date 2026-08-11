@@ -22,7 +22,7 @@ namespace SilentMoon.SharedKernel.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class HomeResources {
+    public class HomeResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace SilentMoon.SharedKernel.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SilentMoon.SharedKernel.Resources.HomeResources", typeof(HomeResources).Assembly);
@@ -51,7 +51,7 @@ namespace SilentMoon.SharedKernel.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Daily Thought.
         /// </summary>
-        internal static string DailyThoughtTitle {
+        public static string DailyThoughtTitle {
             get {
                 return ResourceManager.GetString("DailyThoughtTitle", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Sleep.
         /// </summary>
-        internal static string FeaturedSleepTitle {
+        public static string FeaturedSleepTitle {
             get {
                 return ResourceManager.GetString("FeaturedSleepTitle", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Night Island.
         /// </summary>
-        internal static string NightIslandTitle {
+        public static string NightIslandTitle {
             get {
                 return ResourceManager.GetString("NightIslandTitle", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Popular Meditations.
         /// </summary>
-        internal static string PopularMeditationsTitle {
+        public static string PopularMeditationsTitle {
             get {
                 return ResourceManager.GetString("PopularMeditationsTitle", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Recommended For You.
         /// </summary>
-        internal static string RecommendedTitle {
+        public static string RecommendedTitle {
             get {
                 return ResourceManager.GetString("RecommendedTitle", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace SilentMoon.SharedKernel.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Sleep Music.
         /// </summary>
-        internal static string SleepMusicSubtitle {
+        public static string SleepMusicSubtitle {
             get {
                 return ResourceManager.GetString("SleepMusicSubtitle", resourceCulture);
             }
