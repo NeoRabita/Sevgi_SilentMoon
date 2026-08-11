@@ -59,5 +59,59 @@ namespace SilentMoon.SharedKernel.Resources {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Daily Thought.
+        /// </summary>
+        internal static string DailyThoughtTitle {
+            get {
+                return ResourceManager.GetString("DailyThoughtTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sleep.
+        /// </summary>
+        internal static string FeaturedSleepTitle {
+            get {
+                return ResourceManager.GetString("FeaturedSleepTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Night Island.
+        /// </summary>
+        internal static string NightIslandTitle {
+            get {
+                return ResourceManager.GetString("NightIslandTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Popular Meditations.
+        /// </summary>
+        internal static string PopularMeditationsTitle {
+            get {
+                return ResourceManager.GetString("PopularMeditationsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recommended For You.
+        /// </summary>
+        internal static string RecommendedTitle {
+            get {
+                return ResourceManager.GetString("RecommendedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sleep Music.
+        /// </summary>
+        internal static string SleepMusicSubtitle {
+            get {
+                return ResourceManager.GetString("SleepMusicSubtitle", resourceCulture);
+            }
+        }
     }
 }
