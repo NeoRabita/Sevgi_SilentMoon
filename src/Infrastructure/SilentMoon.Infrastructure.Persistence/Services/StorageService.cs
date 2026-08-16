@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic.FileIO;
 using Minio;
 using Minio.DataModel.Args;
 using SilentMoon.Application.Interfaces.Services;
+using SilentMoon.Domain.Enums;
 using SilentMoon.Infrastructure.Persistence.Settings;
 using System;
 using System.Collections.Generic;
@@ -24,11 +26,11 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             _minioClient = minioClient;
         }
 
-        public async Task<Stream> DownloadFileAsync(string fileName)
+        public async Task<Stream> DownloadFileAsync(string fileName,FileType fileType)
         {
             var memoryStream = new MemoryStream();
             var getObjectArgs = new GetObjectArgs()
-            .WithBucket(_settings.BucketName)
+            .WithBucket(fileType == 0 ? _settings.BucketName : _settings.AudioBucketName)
             .WithObject(fileName)
             .WithCallbackStream((stream) =>
             {
@@ -39,25 +41,26 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             return memoryStream;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file)
+        public async Task<string> UploadFileAsync(Stream stream,string fileName,string contentType, FileType fileType)
         {
-            var bucketExistArgs = new BucketExistsArgs().WithBucket(_settings.BucketName);
+            var bucketName = fileType == 0 ? _settings.BucketName : _settings.AudioBucketName;
+            var bucketExistArgs = new BucketExistsArgs().WithBucket(bucketName);
             bool found = await _minioClient.BucketExistsAsync(bucketExistArgs);
             if (!found)
             {
-                var makeBucketArgs = new MakeBucketArgs().WithBucket(_settings.BucketName);
+                var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
                 await _minioClient.MakeBucketAsync(makeBucketArgs);
             }
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            using var stream = file.OpenReadStream();
+            var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
+            
             var putObjectArgs = new PutObjectArgs()
-       .WithBucket(_settings.BucketName)
-       .WithObject(fileName)
+       .WithBucket(bucketName)
+       .WithObject(newFileName)
        .WithStreamData(stream)
-       .WithObjectSize(file.Length)
-       .WithContentType(file.ContentType);
+       .WithObjectSize(stream.Length)
+       .WithContentType(contentType);
             await _minioClient.PutObjectAsync(putObjectArgs);
-            return fileName;
+            return newFileName;
         }
 
 
