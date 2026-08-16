@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using SilentMoon.Infrastructure.Persistence.Contexts;
@@ -11,9 +12,11 @@ using SilentMoon.Infrastructure.Persistence.Contexts;
 namespace SilentMoon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260816092841_TopicDataUpdated")]
+    partial class TopicDataUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,56 +134,35 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3699),
-                            IconKey = "betterSleep.png",
+                            CreateDate = new DateTime(2026, 8, 16, 13, 28, 41, 357, DateTimeKind.Local).AddTicks(225),
                             IsDeleted = false,
                             Slug = "Sleep",
-                            Title = "Better Sleep"
+                            Title = "Sleepy"
                         },
                         new
                         {
                             Id = 2,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3709),
-                            IconKey = "reduceStress.png",
+                            CreateDate = new DateTime(2026, 8, 16, 13, 28, 41, 357, DateTimeKind.Local).AddTicks(291),
+                            IconKey = "reduceStress",
                             IsDeleted = false,
                             Slug = "Stress",
-                            Title = "Reduce Stressed"
+                            Title = "Stressed"
                         },
                         new
                         {
                             Id = 3,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3711),
-                            IconKey = "reduceAnxiety.png",
+                            CreateDate = new DateTime(2026, 8, 16, 13, 28, 41, 357, DateTimeKind.Local).AddTicks(293),
                             IsDeleted = false,
                             Slug = "Anxiety",
-                            Title = "Reduce Anxiety"
+                            Title = "Anxiety"
                         },
                         new
                         {
                             Id = 4,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3712),
-                            IconKey = "increaseHappiness.png",
+                            CreateDate = new DateTime(2026, 8, 16, 13, 28, 41, 357, DateTimeKind.Local).AddTicks(295),
                             IsDeleted = false,
-                            Slug = "Happiness",
-                            Title = "Increase Happiness"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3713),
-                            IconKey = "improvePerformance.png",
-                            IsDeleted = false,
-                            Slug = "Performance",
-                            Title = "Improve Performance"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreateDate = new DateTime(2026, 8, 16, 14, 50, 8, 494, DateTimeKind.Local).AddTicks(3714),
-                            IconKey = "personalGrowth.png",
-                            IsDeleted = false,
-                            Slug = "Growth",
-                            Title = "Personal Growth"
+                            Slug = "Meditation",
+                            Title = "Meditational"
                         });
                 });
 

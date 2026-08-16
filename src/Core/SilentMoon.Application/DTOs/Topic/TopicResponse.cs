@@ -15,7 +15,7 @@ namespace SilentMoon.Application.DTOs.Topic
         public string Title { get; set; }
 
         public string IconKey { get; set; }
-
+        public string ImgUrl { get; set; }
         public string ColorHex { get; set; }
     }
 }

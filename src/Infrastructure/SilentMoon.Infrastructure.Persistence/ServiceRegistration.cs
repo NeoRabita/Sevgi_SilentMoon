@@ -1,10 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Dapper;
+﻿using Dapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Minio;
+using SilentMoon.Application.Common.User;
 using SilentMoon.Application.Interfaces.Caching;
 using SilentMoon.Application.Interfaces.Logging;
 using SilentMoon.Application.Interfaces.Repositories;
@@ -16,10 +18,10 @@ using SilentMoon.Infrastructure.Persistence.Logging;
 using SilentMoon.Infrastructure.Persistence.Repositories;
 using SilentMoon.Infrastructure.Persistence.Services;
 using SilentMoon.Infrastructure.Persistence.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
-using SilentMoon.Application.Common.User;
 namespace SilentMoon.Infrastructure.Persistence
 {
     public static class ServiceRegistration
@@ -35,12 +37,28 @@ namespace SilentMoon.Infrastructure.Persistence
                 options.InstanceName = Assembly.GetEntryAssembly()?.GetName().Name + "_";
             });
 
+            services.AddSingleton<IMinioClient>(sp =>
+            {
+                var settings = sp
+                    .GetRequiredService<IOptions<APIAppSettings>>()
+                    .Value
+                    .MinioSettings;
+
+                return new MinioClient()
+                    .WithEndpoint(settings.Endpoint)
+                    .WithCredentials(
+                        settings.AccessKey,
+                        settings.SecretKey)
+                    .Build();
+            });
+
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerManager<>));
             services.AddScoped<ICacheService, RedisCacheService>();
             services.Configure<APIAppSettings>(configuration.GetSection("APIAppSettings"));
             services.Configure<MailSettings>( configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDateTimeService, DateTimeService>();
+            services.AddScoped<IStorageService, StorageService>();
             services.AddScoped<IDapper, DapperClass>();
             services.AddScoped<IUow, Uow>();
             services.AddScoped<IOtpService,OtpService>();
