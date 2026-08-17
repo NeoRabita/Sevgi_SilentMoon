@@ -41,7 +41,7 @@ namespace SilentMoon.Infrastructure.Persistence.Services
             return memoryStream;
         }
 
-        public async Task<string> UploadFileAsync(Stream stream,string fileName,string contentType, FileType fileType)
+        public async Task<string> UploadFileAsync(Stream stream,string fileName,string contentType, FileType fileType, string prefix)
         {
             var bucketName = fileType == 0 ? _settings.BucketName : _settings.AudioBucketName;
             var bucketExistArgs = new BucketExistsArgs().WithBucket(bucketName);
@@ -51,8 +51,8 @@ namespace SilentMoon.Infrastructure.Persistence.Services
                 var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
                 await _minioClient.MakeBucketAsync(makeBucketArgs);
             }
-            var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
-            
+            var extension = Path.GetExtension(fileName);
+            var newFileName = $"{prefix}_{Guid.NewGuid()}{extension}";
             var putObjectArgs = new PutObjectArgs()
        .WithBucket(bucketName)
        .WithObject(newFileName)
