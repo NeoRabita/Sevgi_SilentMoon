@@ -18,5 +18,8 @@ namespace SilentMoon.Domain.Entities
         public int DurationSec { get; set; }
         public bool IsFeatured { get; set; }
         public NarratorType NarratorType { get; set; }
+        public string TranslationId { get; set; }
+        public Translation Translation { get; set; }
+
     }
 }

@@ -13,6 +13,8 @@ namespace SilentMoon.Domain.Entities
         public string Title { get; set; }   
         public string Type { get; set; }
         public string IconUrl { get; set; }
-
+        public string TranslationId { get; set; }
+        public Translation Translation { get; set; }
+        public ICollection<Course> Courses { get; set; } 
     }
 }

@@ -13,6 +13,9 @@ namespace SilentMoon.Infrastructure.Persistence.Contexts
         public DbSet<RefreshToken>RefreshTokens { get; set; }
         public DbSet<Topic>Topics { get; set; }
         public DbSet<UserTopic>UserTopics { get; set; }
+        public DbSet<Translation> Translations { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

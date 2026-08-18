@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using SilentMoon.Infrastructure.Persistence.Contexts;
@@ -11,9 +12,11 @@ using SilentMoon.Infrastructure.Persistence.Contexts;
 namespace SilentMoon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260818073226_TranslationAdded")]
+    partial class TranslationAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,8 +123,6 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("TranslationId");
 
                     b.ToTable("Courses");
@@ -210,7 +211,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(974),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9307),
                             IconKey = "betterSleep.png",
                             IsDeleted = false,
                             Slug = "Sleep",
@@ -219,7 +220,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(999),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9319),
                             IconKey = "reduceStress.png",
                             IsDeleted = false,
                             Slug = "Stress",
@@ -228,7 +229,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(1002),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9321),
                             IconKey = "reduceAnxiety.png",
                             IsDeleted = false,
                             Slug = "Anxiety",
@@ -237,7 +238,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(1005),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9322),
                             IconKey = "increaseHappiness.png",
                             IsDeleted = false,
                             Slug = "Happiness",
@@ -246,7 +247,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 5,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(1008),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9323),
                             IconKey = "improvePerformance.png",
                             IsDeleted = false,
                             Slug = "Performance",
@@ -255,7 +256,7 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 6,
-                            CreateDate = new DateTime(2026, 8, 18, 12, 23, 51, 907, DateTimeKind.Local).AddTicks(1010),
+                            CreateDate = new DateTime(2026, 8, 18, 11, 32, 26, 15, DateTimeKind.Local).AddTicks(9324),
                             IconKey = "personalGrowth.png",
                             IsDeleted = false,
                             Slug = "Growth",
@@ -267,6 +268,9 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("NVARCHAR2(450)");
+
+                    b.Property<int>("RelationalId")
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("Translation_AZ")
                         .HasColumnType("NVARCHAR2(2000)");
@@ -316,12 +320,6 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("SilentMoon.Domain.Entities.Course", b =>
                 {
-                    b.HasOne("SilentMoon.Domain.Entities.Category", null)
-                        .WithMany("Courses")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SilentMoon.Domain.Entities.Translation", "Translation")
                         .WithMany()
                         .HasForeignKey("TranslationId");
@@ -369,11 +367,6 @@ namespace SilentMoon.Infrastructure.Persistence.Migrations
                     b.Navigation("RefreshToken");
 
                     b.Navigation("UserTopics");
-                });
-
-            modelBuilder.Entity("SilentMoon.Domain.Entities.Category", b =>
-                {
-                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("SilentMoon.Domain.Entities.Topic", b =>

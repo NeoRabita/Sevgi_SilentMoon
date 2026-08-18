@@ -14,6 +14,8 @@ namespace SilentMoon.Domain.Entities
         public string IconKey { get; set; }
         public string ColorHex { get; set; }
         public ICollection<UserTopic> UserTopics { get; set; } = new List<UserTopic>();
+        public string TranslationId { get; set; }
+        public Translation Translation { get; set; }
 
     }
 }

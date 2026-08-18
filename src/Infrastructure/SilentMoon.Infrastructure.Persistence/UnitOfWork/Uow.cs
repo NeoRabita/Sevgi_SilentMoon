@@ -15,6 +15,12 @@ public class Uow : IUow
     public ITopicRepository TopicRepository { get; }
     public IGenericRepository<UserTopic> UserTopicRepository { get; }
 
+    public IGenericRepository<Translation> TranslationRepository { get; }
+
+    public IGenericRepository<Course> CourseRepository {  get; }
+
+    public IGenericRepository<Category> CategoryRepository {  get; }
+
     public Uow(
         AppDbContext context, IGenericRepository<ApplicationUser> userRepository, IGenericRepository<RefreshToken> refreshTokenRepository, ITopicRepository topicRepository, IGenericRepository<UserTopic> userTopicRepository)
     {

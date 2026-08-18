@@ -10,6 +10,9 @@ public interface IUow : IDisposable
     IGenericRepository<RefreshToken> RefreshTokenRepository { get; }
     ITopicRepository TopicRepository { get; }
     IGenericRepository<UserTopic> UserTopicRepository { get; }
+    IGenericRepository<Translation> TranslationRepository { get; }
+    IGenericRepository<Course> CourseRepository { get; }
+    IGenericRepository<Category> CategoryRepository { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task BeginTransactionAsync();
     Task CommitAsync();
